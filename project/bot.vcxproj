@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\silvi\Documents\UFPE\Agentes_Cognitivos\SC2API_Binary_vs2017\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\silvi\Documents\UFPE\Agentes_Cognitivos\SC2API_Binary_vs2017\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Luiza\Desktop\Project\z-command\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Luiza\Desktop\Project\z-command\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,10 +133,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BuildingManager.cpp" />
+    <ClCompile Include="CombatManager.cpp" />
+    <ClCompile Include="MacroManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="ZergBot.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BuildingManager.h" />
+    <ClInclude Include="CombatManager.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="MacroManager.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="ZergBot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

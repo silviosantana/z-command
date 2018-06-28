@@ -11,9 +11,9 @@ private:
 	
 	size_t CountUnitType(UNIT_TYPEID unit_type);
 	bool TryBuildStructure(ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type);
-	bool TryBuildSupplyDepot();
+	bool OrderOverlod();
 	const Unit * FindNearestMineralPatch(const Point2D & start);
-	bool TryBuildBarracks();
+	bool TryBuildSpawningPool();
 
 public:
 

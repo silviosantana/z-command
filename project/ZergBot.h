@@ -12,13 +12,21 @@ class ZergBot : public Agent
 {
 private:
 
+	Point2D startingPos;
+	
 	BuildingManager build_man;
 	MacroManager mac_man;
 	CombatManager com_man;
-
+	 
 public:
 
 	ZergBot();
+
+	Point2D getStartingPos();
+
+	void setStartingPosCoords(float x, float y);
+
+	void setStartingPos(Point2D pos);
 	
 	BuildingManager GetBuildingManager();
 	

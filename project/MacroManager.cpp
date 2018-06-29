@@ -3,8 +3,111 @@
 
 using namespace sc2;
 
+
+//Scouting 
+int MacroManager::getStatusScout() {
+	return this->statusScout;
+}
+
+void MacroManager::setStatusScout(int status) {
+	this->statusScout = status;
+}
+
+void MacroManager::incrementStatusScout() {
+	this->statusScout++;
+	this->statusScout = this->statusScout % 9;
+}
+
+bool MacroManager::ManageScouting() {
+	Units overlords = bot_.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_OVERLORD));
+	//std::cout << "Scouting  " << std::to_string(overlords.size())<< std::endl;
+
+	Point2D EnemySpawnPoint = bot_.Observation()->GetGameInfo().enemy_start_locations.front();
+
+	for (auto overlord : overlords) {
+
+		//checar se está em idle
+		if (overlord->orders.size() < 1) {
+			switch (this->statusScout) {
+			case 0:
+				bot_.Actions()->UnitCommand(overlord, ABILITY_ID::MOVE, Point2D(pontasX[0], pontasY[0]));
+				std::cout <<  "Scouting ---------- 0 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[0]) << " " << std::to_string(pontasY[0]) << std::endl;
+
+				//log("Moving to (" + std::to_string(pontasX[0] * 32) + ", " + std::to_string(pontasY[0] * 32) + ")");
+				break;
+			case 1:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[0], pontasY[1]));
+				std::cout << "Scouting ---------- 1 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[0]) << " " << std::to_string(pontasY[1]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[1] * 32) + ", " + std::to_string(pontasY[0] * 32) + ")");
+				break;
+			case 2:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[0], pontasY[2]));
+				std::cout << "Scouting ---------- 2 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[0]) << " " << std::to_string(pontasY[2]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[1] * 32) + ", " + std::to_string(pontasY[1] * 32) + ")");
+				break;
+			case 3:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[1] , pontasY[0] ));
+				std::cout << "Scouting ---------- 3 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[1]) << " " << std::to_string(pontasY[0]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[0] * 32) + ", " + std::to_string(pontasY[1] * 32) + ")");
+				break;
+			case 4:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[1], pontasY[1] ));
+				std::cout << "Scouting ---------- 4 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[1]) << " " << std::to_string(pontasY[1]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[0] * 32) + ", " + std::to_string(pontasY[1] * 32) + ")");
+				break;
+			case 5:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[1] , pontasY[2] ));
+				std::cout << "Scouting ---------- 5 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[1]) << " " << std::to_string(pontasY[2]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[0] * 32) + ", " + std::to_string(pontasY[1] * 32) + ")");
+				break;
+			case 6:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[2] , pontasY[0] ));
+				std::cout << "Scouting ---------- 6 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[2]) << " " << std::to_string(pontasY[0]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[0] * 32) + ", " + std::to_string(pontasY[1] * 32) + ")");
+				break;
+			case 7:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[2] , pontasY[1] ));
+				std::cout << "Scouting ---------- 7 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[2]) << " " << std::to_string(pontasY[1]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[0] * 32) + ", " + std::to_string(pontasY[1] * 32) + ")");
+				break;
+			case 8:
+				bot_.Actions()->UnitCommand(overlord, sc2::ABILITY_ID::MOVE, Point2D(pontasX[2] , pontasY[2] ));
+				std::cout << "Scouting ---------- 8 " << std::to_string(this->getStatusScout()) << " " << std::to_string(pontasX[2]) << " " << std::to_string(pontasY[2]) << std::endl;
+				//log("Moving to (" + std::to_string(pontasX[0] * 32) + ", " + std::to_string(pontasY[1] * 32) + ")");
+				break;
+			}
+
+			this->incrementStatusScout();
+		}
+	}
+
+	return true;
+}
+
+
 void MacroManager::OnStart(){
 	// TODO: Initialise things here
+	this->setStatusScout(0);
+
+	int middleX = bot_.Observation()->GetGameInfo().width / 2;
+	int middleY = bot_.Observation()->GetGameInfo().height / 2;
+	pontasX[0] = (middleX * 2) - 10;
+	pontasY[0] = (middleY * 2) - 10;
+	pontasX[1] = 10;
+	pontasY[1] = 10;
+	pontasX[2] = middleX;
+	pontasY[2] = middleY;
+}
+
+void MacroManager::OnStep()
+{
+	ManageDroneProduction();
+	ManageOverlordProduction();
+	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
+	ManageZerglingProduction();
+	ManageDrones();
+	ManageQueenProduction();
+	ManageScouting();
 }
 
 bool MacroManager::GetRandomUnit(const Unit*& unit_out, const ObservationInterface* observation, UnitTypeID unit_type) {
@@ -151,7 +254,7 @@ bool MacroManager::ManageQueenProduction() {
 		std::cout << "Ordered a Queen(s)" << std::endl;
 	}
 	else {
-		std::cout << "Didn't order a Queen" << std::endl;
+		//std::cout << "Didn't order a Queen" << std::endl;
 	}
 
 	return false;
@@ -282,7 +385,7 @@ bool MacroManager::OrderQueen() {
 	}
 
 	else {
-		if (Util::CountTownHallTypeBuildings(bot_) > 1) {
+		if (Util::CountTownHallTypeBuildings(bot_) >= 1) {
 			const Unit* unit = nullptr;
 			if (!GetRandomUnit(unit, bot_.Observation(), UNIT_TYPEID::ZERG_HATCHERY)) return false;
 			bot_.Actions()->UnitCommand(unit, ABILITY_ID::TRAIN_QUEEN);
@@ -296,12 +399,5 @@ bool MacroManager::OrderQueen() {
 	return false;
 }
 
-void MacroManager::OnStep()
-{
-	ManageDroneProduction();
-	ManageOverlordProduction();
-	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
-	ManageZerglingProduction();
-	ManageDrones();
-	ManageQueenProduction();
-}
+
+

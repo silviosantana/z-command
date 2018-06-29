@@ -9,6 +9,19 @@ ZergBot::ZergBot():
 	com_man(*this)
 	{}
 
+Point2D ZergBot::getStartingPos() {
+	return this->startingPos;
+}
+
+void ZergBot::setStartingPosCoords(float x, float y) {
+	this->startingPos.x = x;
+	this->startingPos.y = y;
+}
+
+void ZergBot::setStartingPos(Point2D pos) {
+	this->startingPos = pos;
+}
+
 BuildingManager ZergBot::GetBuildingManager(){
 	return this->build_man;
 }

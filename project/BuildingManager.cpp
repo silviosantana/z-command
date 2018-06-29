@@ -10,6 +10,7 @@ void BuildingManager::OnStart() {
 	for (auto hatchery : hatcheries) {
 		spawn = hatchery->pos;
 		cout << "Hatchery spawn point x: " << spawn.x << ", y: " << spawn.y << endl;
+		bot.setStartingPos(spawn);
 	}
 }
 

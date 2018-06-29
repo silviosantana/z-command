@@ -1,5 +1,7 @@
 #pragma once
 #include <sc2api/sc2_unit.h>
+#include "sc2api/sc2_api.h"
+#include "sc2lib/sc2_lib.h"
 
 //Esta classe eh responsavel pela construcao de unidades
 
@@ -20,7 +22,7 @@ public:
 	bool OrderExtractor();
 	bool TryBuildStructure(ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type = UNIT_TYPEID::ZERG_DRONE);
 	bool TryBuildSpawningPool();
-	bool TryBuildExtractor();
+	//bool TryBuildExtractor();
 	
 	Unit GetADrone();
 	Units GetTownHalls();

@@ -15,12 +15,16 @@ void CombatManager::OnStart()
 bool CombatManager::OnStep()
 {
 	Units zerglings = bot.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_ZERGLING));
+	Units overlords = bot.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_OVERLORD));
+	
 	size_t numOfZerglings = zerglings.size();
+	size_t numOfOverlords = overlords.size();
 
-	if (numOfZerglings > 15) {
+	if (numOfZerglings > 30) {
 		for(auto zergling : zerglings){
 				bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, EnemySpawnPoint);
-			}
+		}
+
 	}
 
 	return false;

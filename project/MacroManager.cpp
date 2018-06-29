@@ -53,7 +53,7 @@ bool MacroManager::ManageZerglingProduction() {
 		return false;
 	}
 
-	// Criando 10 zerglings
+	// Criando 30 zerglings
 	size_t numOfZerglings = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_ZERGLING);
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
 

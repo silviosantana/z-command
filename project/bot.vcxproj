@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Luiza\Desktop\Project\z-command\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Luiza\Desktop\Project\z-command\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\lazar\git\Projeto Aca\z-command\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\lazar\git\Projeto Aca\z-command\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

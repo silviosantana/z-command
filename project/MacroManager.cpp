@@ -305,3 +305,4 @@ void MacroManager::OnStep()
 	ManageDrones();
 	ManageQueenProduction();
 }
+

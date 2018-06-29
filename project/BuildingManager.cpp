@@ -46,8 +46,9 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 	bot.Actions()->UnitCommand(unit_to_build,
 		ability_type_for_structure,
 		Point2D(unit_to_build->pos.x + rx * 15.0f, unit_to_build->pos.y + ry * 15.0f));
-
-	cout << "Estrutura Construida" << std::endl;
+		
+	cout << "Tentativa de construir a estrutura -> " << int(unit_type) << std::endl;
+	
 	
 	return true;
 }
@@ -56,6 +57,10 @@ bool BuildingManager::TryBuildSpawningPool() {
 	const ObservationInterface* observation = bot.Observation();
 	size_t numOfOv = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_OVERLORD);
 	size_t numOfSpawning = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_SPAWNINGPOOL);	
+	
+	if (bot.Observation()->GetMinerals() < 200) {
+		return false;
+	}
 
 	if (numOfOv < 1) {
 		return false;
@@ -65,20 +70,23 @@ bool BuildingManager::TryBuildSpawningPool() {
 		return false;
 	}
 
-	return TryBuildStructure(ABILITY_ID::BUILD_SPAWNINGPOOL);
+	//Se a encomenda de um SpawningPool estiver na fila, nao fazer nada
+	if (Util::CountNumberOfCurrentAbilitiesInProgress(bot, ABILITY_ID::BUILD_SPAWNINGPOOL) > 0) {
+		return false;
+	}
 
+	return TryBuildStructure(ABILITY_ID::BUILD_SPAWNINGPOOL);
 }
 
-bool BuildingManager::OrderExtractor() {
 
-	
+
+bool BuildingManager::OrderExtractor() {
 
 	size_t numOfExtractors = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_EXTRACTOR);
 	size_t numOfSpawning = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_SPAWNINGPOOL);
 
-	//|| numOfSpawning == 0
 
-	if (numOfExtractors >= 1 ) {
+	if (numOfExtractors >= 1 || numOfSpawning == 0) {
 		return false;
 	}
 

@@ -31,8 +31,10 @@ public:
 	BuildingManager GetBuildingManager();
 	
 	void OnStep() override final;
-	void OnUnitIdle(const Unit * unit) final;
+	void OnUnitIdle(const Unit * unit) override final;
 	void OnGameStart() override final;
 	void OnGameEnd() override final;
+	size_t CountUnitType(UNIT_TYPEID unit_type);
+	const Unit * FindNearestMineralPatch(const Point2D & start);
 };
 

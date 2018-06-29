@@ -204,7 +204,7 @@ void MacroManager::OnStep()
 {
 	ManageDroneProduction();
 	ManageOverlordProduction();
-	ManageGeyserProduction();
+	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
 	ManageZerglingProduction();
 	ManageDrones();
 

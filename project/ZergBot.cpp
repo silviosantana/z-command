@@ -30,6 +30,7 @@ void ZergBot::OnGameEnd(){
 void ZergBot::OnStep() {
 	mac_man.OnStep();
 	com_man.OnStep();
+	build_man.OnStep();
 }
 
 void ZergBot::OnUnitIdle(const Unit* unit) {

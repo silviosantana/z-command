@@ -14,6 +14,10 @@ void BuildingManager::OnStart() {
 }
 
 bool BuildingManager::OnStep() {
+
+	TryBuildSpawningPool();	
+	OrderExtractor();
+	
 	return false;
 }
 
@@ -43,7 +47,7 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 		ability_type_for_structure,
 		Point2D(unit_to_build->pos.x + rx * 15.0f, unit_to_build->pos.y + ry * 15.0f));
 
-	std:cout << "Estrutura Construida" << std::endl;
+	cout << "Estrutura Construida" << std::endl;
 	
 	return true;
 }
@@ -51,8 +55,7 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 bool BuildingManager::TryBuildSpawningPool() {
 	const ObservationInterface* observation = bot.Observation();
 	size_t numOfOv = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_OVERLORD);
-	size_t numOfSpawning = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_SPAWNINGPOOL);
-
+	size_t numOfSpawning = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_SPAWNINGPOOL);	
 
 	if (numOfOv < 1) {
 		return false;
@@ -67,6 +70,18 @@ bool BuildingManager::TryBuildSpawningPool() {
 }
 
 bool BuildingManager::OrderExtractor() {
+
+	
+
+	size_t numOfExtractors = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_EXTRACTOR);
+	size_t numOfSpawning = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_SPAWNINGPOOL);
+
+	//|| numOfSpawning == 0
+
+	if (numOfExtractors >= 1 ) {
+		return false;
+	}
+
 	//Se a quantidade de mineral for menor que 75, nao faca nada
 	if (bot.Observation()->GetMinerals() < 75) {
 		return false;
@@ -77,13 +92,18 @@ bool BuildingManager::OrderExtractor() {
 		return false;
 	}
 
+	cout << "Ordering an Extractor" << endl;
+	
+
 	//Hatchery mais proximo do Spawn
 	float distance = FLT_MAX;
+	int num_geysers = 0;
 	Unit nearestGeyser;
 	Units geysers = bot.Observation()->GetUnits(Unit::Neutral);
 
 	for (auto geyser : geysers) {
 		if (Util::IsGeyser(*geyser)){
+			num_geysers++;
 			float newDistance = Distance2D(spawn, geyser->pos);
 			if (newDistance < distance){
 				nearestGeyser = *geyser;
@@ -91,14 +111,15 @@ bool BuildingManager::OrderExtractor() {
 			}
 		}
 	}
+
+	cout << "Available Geysers: "<< num_geysers << endl;
 	
-	static bool const VALUE = sizeof(nearestGeyser);
-	if (VALUE == sizeof(Unit)) {
-		Unit builder = GetADrone();
-		bot.Actions()->UnitCommand(&builder, ABILITY_ID::BUILD_EXTRACTOR, true);
+	if(num_geysers >= 1){
+		Unit builder = GetADrone();		
+		bot.Actions()->UnitCommand(&builder, ABILITY_ID::BUILD_EXTRACTOR,&nearestGeyser, true);
 	}
 
-	return false;
+	return false; 
 }
 
 Unit BuildingManager::GetADrone(){

@@ -8,8 +8,10 @@ class ZergBot;
 class CombatManager{
 	ZergBot & bot;
 	Point2D EnemySpawnPoint;
+	int ZerglingGroups;
 
 public:
+
 	CombatManager(ZergBot & bot) : bot(bot) {};
 
 	void OnStart();

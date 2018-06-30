@@ -242,19 +242,22 @@ bool MacroManager::ManageQueenProduction() {
 
 	// Criando 1 rainha para cada 15 drones
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
-	if (numOfDrones < 15) {
+	
+	if (numOfDrones <15) {
+		std::cout << "Didn't order a Queen because of Drones:" << numOfDrones << std::endl;
 		return false;
 	}
 
 	size_t numOfHatcheries = Util::CountTownHallTypeBuildings(bot_);
 	size_t numOfUnits = bot_.Observation()->GetUnits(Unit::Alliance::Self).size();
-	// Se cada hatchery possuir menos de 20 unidades, faça mais
-	if ((numOfHatcheries * 20 + 2) >= numOfUnits) {
+	// Se cada hatchery possuir menos de 20 unidades, faça mais antes de criar a queen!
+	if (numOfUnits >= (numOfHatcheries * 20 + 2)) {
 		OrderQueen();
 		std::cout << "Ordered a Queen(s)" << std::endl;
 	}
 	else {
-		//std::cout << "Didn't order a Queen" << std::endl;
+
+		std::cout << "Didn't order a Queen" << std::endl;
 	}
 
 	return false;
@@ -385,11 +388,15 @@ bool MacroManager::OrderQueen() {
 	}
 
 	else {
+
 		if (Util::CountTownHallTypeBuildings(bot_) >= 1) {
+
 			const Unit* unit = nullptr;
-			if (!GetRandomUnit(unit, bot_.Observation(), UNIT_TYPEID::ZERG_HATCHERY)) return false;
+			if (!GetRandomUnit(unit, bot_.Observation(), UNIT_TYPEID::ZERG_HATCHERY)) {
+				return false;
+			}
+			std::cout << " Really ordered a QUEEN! " << std::endl;
 			bot_.Actions()->UnitCommand(unit, ABILITY_ID::TRAIN_QUEEN);
-			
 			return true;
 		}
 

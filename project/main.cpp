@@ -1,5 +1,4 @@
 #include <sc2api/sc2_api.h>
-
 #include <iostream>
 #include "ZergBot.h"
 

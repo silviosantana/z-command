@@ -45,6 +45,9 @@ public:
 	bool ManageZerglingProduction();
 	bool ManageQueenProduction();
 	bool ManageHydraliskProduction();
+	bool ManageMutaliskProduction();
+	bool ManageCorruptorProduction();
+	bool ManageInfestorProduction();
 
 	bool ManageDrones();
 
@@ -55,6 +58,9 @@ public:
 	bool OrderHydralisk();
 	bool OrderZergling();
 	bool OrderQueen();
+	bool OrderMutalisk();
+	bool OrderCorruptor();
+	bool OrderInfestor();
 
 	void OnStep();
 	void HandleGasWorkers();

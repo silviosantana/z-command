@@ -4,6 +4,8 @@
 #include <sc2api/sc2_interfaces.h>
 #include <sc2api/sc2_unit.h>
 
+#include <map>
+
 class ZergBot;
 
 struct IsTownHall {
@@ -26,7 +28,8 @@ private:
 	int pontasX[3];
 	int pontasY[3];
 	int gasWorkerCounter;
-
+	std::map<sc2::Tag, int> extractorWorkerCount;
+	//std::map<sc2::Unit, sc2::Unit> workerExtractorMap;
 
 public:
 

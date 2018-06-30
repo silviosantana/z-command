@@ -58,6 +58,8 @@ public:
 	bool OrderHydralisk();
 	bool OrderZergling();
 	bool OrderQueen();
+	void ManageQueen();
+	void TryInjectLarva();
 	bool OrderMutalisk();
 	bool OrderCorruptor();
 	bool OrderInfestor();

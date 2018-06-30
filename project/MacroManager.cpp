@@ -495,6 +495,40 @@ bool MacroManager::OrderQueen() {
 	return false;
 }
 
+void MacroManager::ManageQueen() {
+	TryInjectLarva();
+}
+
+void MacroManager::TryInjectLarva() {
+	const ObservationInterface* observation = bot_.Observation();
+	Units queens = observation->GetUnits(Unit::Alliance::Self, IsUnit(UNIT_TYPEID::ZERG_QUEEN));
+	Units hatcheries = observation->GetUnits(Unit::Alliance::Self, IsTownHall());
+
+	//if we don't have queens or hatcheries don't do anything
+	if (queens.empty() || hatcheries.empty())
+		return;
+
+	for (size_t i = 0; i < queens.size(); ++i) {
+		for (size_t j = 0; j < hatcheries.size(); ++j) {
+
+			//if hatchery isn't complete ignore it
+			if (hatcheries.at(j)->build_progress != 1) {
+				continue;
+			}
+			else {
+
+				//Inject larva and move onto next available queen
+				if (i < queens.size()) {
+					if (queens.at(i)->energy >= 25 && queens.at(i)->orders.empty()) {
+						bot_.Actions()->UnitCommand(queens.at(i), ABILITY_ID::EFFECT_INJECTLARVA, hatcheries.at(j));
+					}
+					++i;
+				}
+			}
+		}
+	}
+}
+
 bool MacroManager::OrderMutalisk() {
 	//Construcao de Mutalisk
 	Units larvae = GetLarvae();
@@ -615,16 +649,24 @@ void MacroManager::HandleGasWorkers() {
 }
 
 void MacroManager::OnStep(){
+	
+	//Manage Production of Units
 	ManageDroneProduction();
 	ManageOverlordProduction();
 	ManageInfestorProduction();
+	ManageQueenProduction();
+	//ManageZerglingProduction();
+	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
+	//ManageHydraliskProduction();
 	//ManageMutaliskProduction();
 	//ManageCorruptorProduction();
-	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
-	//ManageZerglingProduction();
+	
+
+	//Manage Units
 	ManageDrones();
-	HandleGasWorkers();
-	//ManageQueenProduction();
-	//ManageHydraliskProduction();
 	ManageScouting();
+	ManageQueen();
+	HandleGasWorkers();
+	
+	
 }

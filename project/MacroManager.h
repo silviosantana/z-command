@@ -41,7 +41,7 @@ public:
 	bool OrderQueen();
 
 	void OnStep();
-
+	void HandleGasWorkers();
 	sc2::Units GetLarvae();
 	bool GetRandomUnit(const sc2::Unit*& unit_out, const sc2::ObservationInterface* observation, sc2::UnitTypeID unit_type);
 };

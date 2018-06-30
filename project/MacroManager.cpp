@@ -167,8 +167,11 @@ bool MacroManager::ManageDrones(){
 	std::vector<UNIT_TYPEID> mineralTypes;
 	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_MINERALFIELD);
 	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_MINERALFIELD750);
+	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_VESPENEGEYSER);
+	/*mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER);*/
 
 	Units allMineralPatches = Util::GetNeutralUnitsOfType(bot_, mineralTypes);
+
 	Point2D spawn = bot_.GetBuildingManager().GetSpawn();
 	float distance = FLT_MAX;
 	Tag nearestPatch;
@@ -230,6 +233,7 @@ bool MacroManager::OrderZergling() {
 	}
 
 	for (auto larva : larvae) {
+		
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_ZERGLING);
 		std::cout << "Ordered an Zergling" << std::endl;
 		return true;
@@ -303,5 +307,34 @@ void MacroManager::OnStep()
 	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
 	ManageZerglingProduction();
 	ManageDrones();
+	HandleGasWorkers();
 	ManageQueenProduction();
+}
+
+void MacroManager::HandleGasWorkers() {
+	// for each unit we have
+	
+	for (auto & unit : bot_.Observation()->GetUnits(Unit::Alliance::Self))
+	{
+		// if that unit is a refinery
+		//		if (unit.unit_type.toType() == UNIT_TYPEID::ZERG_EXTRACTOR && unit.isCompleted())
+
+		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR)
+		{
+			std::cout << "achou extractor" << std::endl;
+			// if it's less than we want it to be, fill 'er up
+			for (int i = 0; i<(1); ++i)
+			{
+				Units idleDrones = Util::GetIdleDrones(bot_);
+				
+				if (idleDrones.size() > 0) {
+					auto gasWorker = idleDrones[0];
+
+					bot_.Actions()->UnitCommand(gasWorker, ABILITY_ID::SMART, unit);
+
+					//m_workerData.setWorkerJob(gasWorker, WorkerJobs::Gas, unit);					
+				}
+			}
+		}
+	}
 }

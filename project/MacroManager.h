@@ -19,10 +19,19 @@ struct IsTownHall {
 class MacroManager{
 
 	ZergBot & bot_;
+private:
+	//Scouting
+	int statusScout;
+	int pontasX[3];
+	int pontasY[3];
+
 
 public:
 
 	MacroManager(ZergBot & bot) : bot_(bot) {}
+	int getStatusScout();
+	void setStatusScout(int status);
+	void incrementStatusScout();
 	void OnStart();;
 
 	bool ManageDroneProduction();
@@ -33,6 +42,8 @@ public:
 	bool ManageHydraliskProduction();
 
 	bool ManageDrones();
+
+	bool ManageScouting();
 
 	bool OrderDrones();
 	bool OrderOverlords(int quantity);

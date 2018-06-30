@@ -399,8 +399,11 @@ bool MacroManager::OrderQueen() {
 	return false;
 }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> development
 void MacroManager::HandleGasWorkers() {
 	// for each unit we have
 	
@@ -429,7 +432,12 @@ void MacroManager::HandleGasWorkers() {
 	}
 }
 
+<<<<<<< HEAD
 void MacroManager::OnStep(){
+=======
+void MacroManager::OnStep()
+{
+>>>>>>> development
 	ManageDroneProduction();
 	ManageOverlordProduction();
 	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
@@ -438,4 +446,8 @@ void MacroManager::OnStep(){
 	HandleGasWorkers();
 	ManageQueenProduction();
 	ManageScouting();
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> development

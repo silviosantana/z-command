@@ -23,7 +23,7 @@ bool CombatManager::OnStep()
 
 	ZerglingGroups++;
 
-	if (numOfZerglings > 30) {
+	if (numOfZerglings > 20) {
 			for (auto zergling : zerglings) {
 				bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, EnemySpawnPoint);
 			}

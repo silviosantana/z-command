@@ -9,6 +9,7 @@ ZergBot::ZergBot():
 	com_man(*this)
 	{}
 
+
 Point2D ZergBot::getStartingPos() {
 	return this->startingPos;
 }
@@ -22,11 +23,22 @@ void ZergBot::setStartingPos(Point2D pos) {
 	this->startingPos = pos;
 }
 
+int ZergBot::getGamePhase() {
+	return this->gamePhase;
+}
+
+
+void ZergBot::setGamePhase(int phase) {
+	this->gamePhase = phase;
+}
+
 BuildingManager ZergBot::GetBuildingManager(){
 	return this->build_man;
 }
 
 void ZergBot::OnGameStart() {
+	setGamePhase(0);
+
 	build_man.OnStart();
 	mac_man.OnStart();
 	com_man.OnStart();

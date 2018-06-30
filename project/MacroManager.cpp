@@ -340,11 +340,8 @@ bool MacroManager::ManageQueenProduction() {
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
 	size_t numOfQueens = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_QUEEN);
 
-<<<<<<< Updated upstream
-	if (numOfQueens > 4) {
-=======
+
 	if (numOfDrones <15) {
->>>>>>> Stashed changes
 		return false;
 	}
 

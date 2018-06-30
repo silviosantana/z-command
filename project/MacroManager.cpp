@@ -93,7 +93,6 @@ bool MacroManager::ManageScouting() {
 	return true;
 }
 
-
 void MacroManager::OnStart(){
 	// TODO: Initialise things here
 	this->setStatusScout(0);
@@ -140,7 +139,7 @@ bool MacroManager::ManageDroneProduction(){
 	size_t numOfHatcheries = Util::CountTownHallTypeBuildings(bot_);
 
 	// Se cada hatchery possuir menos de 24, faca mais
-	if ((numOfHatcheries * 24 + 2) >= numOfDrones){
+	if ((numOfHatcheries * 12 + 2) >= numOfDrones){
 		OrderDrones();
 	}
 	else{
@@ -215,13 +214,19 @@ bool MacroManager::ManageGeyserProduction(){
 }
 
 bool MacroManager::ManageHydraliskProduction() {
+	size_t numOfHd = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_HYDRALISKDEN);
+
+	if (numOfHd < 1) {
+		return false;
+	}
+
 	if (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 50) {
 		return false;
 	}
 
 	// Criando 1 Hydralisk para cada 5 drones
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
-	if (numOfDrones >= 5) {
+	if (numOfDrones >= 2) {
 		OrderHydralisk();
 		std::cout << "Ordered a Hydralisk(s)" << std::endl;
 		return true;
@@ -229,6 +234,84 @@ bool MacroManager::ManageHydraliskProduction() {
 
 	else {
 		std::cout << "Didn't order a Hydralisk" << std::endl;
+	}
+
+	return false;
+}
+
+bool MacroManager::ManageMutaliskProduction() {
+	size_t numOfSpire = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_SPIRE);
+
+	if (numOfSpire < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 100) {
+		return false;
+	}
+
+	// Criando 1 Mutalisk para cada 5 drones
+	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
+	if (numOfDrones > 1) {
+		OrderMutalisk();
+		std::cout << "Ordered a Mutalisk(s)" << std::endl;
+		return true;
+	}
+
+	else {
+		std::cout << "Didn't order a Mutalisk" << std::endl;
+	}
+
+	return false;
+}
+
+bool MacroManager::ManageCorruptorProduction() {
+	size_t numOfSpire = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_SPIRE);
+
+	if (numOfSpire < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 150 && bot_.Observation()->GetVespene() < 100) {
+		return false;
+	}
+
+	// Criando 1 Corruptor para cada 2 drones
+	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
+	if (numOfDrones > 1) {
+		OrderCorruptor();
+		std::cout << "Ordered a Corruptor(s)" << std::endl;
+		return true;
+	}
+
+	else {
+		std::cout << "Didn't order a Corruptor" << std::endl;
+	}
+
+	return false;
+}
+
+bool MacroManager::ManageInfestorProduction() {
+	size_t numOfInfest = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_INFESTATIONPIT);
+
+	if (numOfInfest < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 150) {
+		return false;
+	}
+
+	// Criando 1 Infestor para cada 2 drones
+	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
+	if (numOfDrones > 1) {
+		OrderInfestor();
+		std::cout << "Ordered a Infestor(s)" << std::endl;
+		return true;
+	}
+
+	else {
+		std::cout << "Didn't order a Infestor" << std::endl;
 	}
 
 	return false;
@@ -367,11 +450,11 @@ bool MacroManager::OrderHydralisk() {
 	//Construcao de Hydralisks
 	Units larvae = GetLarvae();
 
-	if (bot_.Observation()->GetFoodCap() == bot_.Observation()->GetFoodUsed()) {
+	if (larvae.size() < 1){
 		return false;
 	}
-
-	if (larvae.size() < 1 || (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 50)){
+	
+	if ((bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 50)) {
 		return false;
 	}
 
@@ -409,6 +492,69 @@ bool MacroManager::OrderQueen() {
 	return false;
 }
 
+bool MacroManager::OrderMutalisk() {
+	//Construcao de Mutalisk
+	Units larvae = GetLarvae();
+
+	if (larvae.size() < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 100) {
+		return false;
+	}
+
+	for (auto larva : larvae) {
+		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_MUTALISK);
+		std::cout << "Ordered a Mutalisk(s)" << std::endl;
+		return true;
+	}
+
+	return false;
+}
+
+bool MacroManager::OrderCorruptor() {
+	//Construcao de Corruptor
+	Units larvae = GetLarvae();
+
+	if (larvae.size() < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 150 && bot_.Observation()->GetVespene() < 100) {
+		return false;
+	}
+
+	for (auto larva : larvae) {
+		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_CORRUPTOR);
+		std::cout << "Ordered a Corruptor(s)" << std::endl;
+		return true;
+	}
+
+	return false;
+}
+
+bool MacroManager::OrderInfestor() {
+	//Construcao de Infestor
+	Units larvae = GetLarvae();
+
+	if (larvae.size() < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 150) {
+		return false;
+	}
+
+	for (auto larva : larvae) {
+		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_INFESTOR);
+		std::cout << "Ordered a Infestor(s)" << std::endl;
+		return true;
+	}
+
+	return false;
+}
+
 void MacroManager::HandleGasWorkers() {
 	// for each unit we have
 	
@@ -417,7 +563,7 @@ void MacroManager::HandleGasWorkers() {
 		// if that unit is a refinery
 		//		if (unit.unit_type.toType() == UNIT_TYPEID::ZERG_EXTRACTOR && unit.isCompleted())
 
-		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR && this->gasWorkerCounter < 2)
+		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR && this->gasWorkerCounter < 3)
 		{
 			const Unit* unit1 = nullptr;
 			const Unit* unit2 = nullptr;
@@ -439,14 +585,14 @@ void MacroManager::HandleGasWorkers() {
 				this->gasWorkerCounter++;
 
 			}
-	/*		if (!GetRandomUnit(unit3, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
+			if (!GetRandomUnit(unit3, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
 				return;
 			}
 			if (unit3 != nullptr) {
 				bot_.Actions()->UnitCommand(unit3, ABILITY_ID::SMART, unit);
 				this->gasWorkerCounter++;
 			}
-*/
+
 			std::cout << "achou extractor" << std::endl;
 			//// if it's less than we want it to be, fill 'er up
 			//for (int i = 0; i<2; ++i)
@@ -465,14 +611,17 @@ void MacroManager::HandleGasWorkers() {
 	}
 }
 
-void MacroManager::OnStep()
-{
+void MacroManager::OnStep(){
 	ManageDroneProduction();
 	ManageOverlordProduction();
+	//ManageMutaliskProduction();
+	//ManageCorruptorProduction();
+	ManageInfestorProduction();
 	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
-	ManageZerglingProduction();
+	//ManageZerglingProduction();
 	ManageDrones();
 	HandleGasWorkers();
-	ManageQueenProduction();
+	//ManageQueenProduction();
+	//ManageHydraliskProduction();
 	ManageScouting();
 }

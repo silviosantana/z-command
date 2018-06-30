@@ -399,16 +399,7 @@ bool MacroManager::OrderQueen() {
 	return false;
 }
 
-void MacroManager::OnStep()
-{
-	ManageDroneProduction();
-	ManageOverlordProduction();
-	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
-	ManageZerglingProduction();
-	ManageDrones();
-	HandleGasWorkers();
-	ManageQueenProduction();
-}
+
 
 void MacroManager::HandleGasWorkers() {
 	// for each unit we have
@@ -436,4 +427,15 @@ void MacroManager::HandleGasWorkers() {
 			}
 		}
 	}
+}
+
+void MacroManager::OnStep(){
+	ManageDroneProduction();
+	ManageOverlordProduction();
+	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
+	ManageZerglingProduction();
+	ManageDrones();
+	HandleGasWorkers();
+	ManageQueenProduction();
+	ManageScouting();
 }

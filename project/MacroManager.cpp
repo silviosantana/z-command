@@ -129,7 +129,6 @@ bool MacroManager::ManageDroneProduction(){
 		return false;
 	}
 
-	// Criando 24 drones
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
 
 	if (numOfDrones < 1){
@@ -138,13 +137,24 @@ bool MacroManager::ManageDroneProduction(){
 
 	size_t numOfHatcheries = Util::CountTownHallTypeBuildings(bot_);
 
-	// Se cada hatchery possuir menos de 24, faca mais
-	if ((numOfHatcheries * 12 + 2) >= numOfDrones){
-		OrderDrones();
+	if (bot_.getGamePhase() == 0) {
+		if (numOfDrones < (numOfHatcheries * 15)) {
+			OrderDrones();
+		}
+		else {
+			std::cout << "Ordered a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
+		}
 	}
-	else{
-		std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
+	else {
+		// Se cada hatchery possuir menos de 24, faca mais
+		if ((numOfHatcheries * 12 + 2) >= numOfDrones) {
+			OrderDrones();
+		}
+		else {
+			std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
+		}
 	}
+	
 
 	return true;
 }
@@ -326,23 +336,34 @@ bool MacroManager::ManageQueenProduction() {
 		return false;
 	}
 
-	// Criando 1 rainha para cada 15 drones
+	
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
 	size_t numOfQueens = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_QUEEN);
+
 	if (numOfDrones <15) {
 		return false;
 	}
 
-	if (numOfQueens > 2) {
-		return false;
-	}
-
-	size_t numOfHatcheries = Util::CountTownHallTypeBuildings(bot_);
-	size_t numOfUnits = bot_.Observation()->GetUnits(Unit::Alliance::Self).size();
-	// Se cada hatchery possuir menos de 20 unidades, faça mais antes de criar a queen!
-	if (numOfUnits >= (numOfHatcheries * 20 + 2)) {
+	if (bot_.getGamePhase() == 0) {
+		if (numOfQueens >= 1) {
+			return false;
+		}
 		OrderQueen();
 		std::cout << "Ordered a Queen(s)" << std::endl;
+
+	}
+	else {
+		if (numOfQueens > 2) {
+			return false;
+		}
+
+		size_t numOfHatcheries = Util::CountTownHallTypeBuildings(bot_);
+		size_t numOfUnits = bot_.Observation()->GetUnits(Unit::Alliance::Self).size();
+		// Se cada hatchery possuir menos de 20 unidades, faça mais antes de criar a queen!
+		if (numOfUnits >= (numOfHatcheries * 20 + 2)) {
+			OrderQueen();
+			std::cout << "Ordered a Queen(s)" << std::endl;
+		}
 	}
 
 	return false;
@@ -639,12 +660,12 @@ void MacroManager::HandleGasWorkers() {
 
 void MacroManager::OnStep(){
 	
-	//Manage Production of Units
+	///Manage Production of Units
 	ManageDroneProduction();
 	ManageOverlordProduction();
-	ManageInfestorProduction();
+	//ManageInfestorProduction();
 	ManageQueenProduction();
-	//ManageZerglingProduction();
+	ManageZerglingProduction();
 	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
 	//ManageHydraliskProduction();
 	//ManageMutaliskProduction();

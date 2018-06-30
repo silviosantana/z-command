@@ -18,13 +18,21 @@ void BuildingManager::OnStart() {
 bool BuildingManager::OnStep() {
 
 	TryBuildSpawningPool();
-	OrderExtractor();
-	TryBuildHydraliskDen();
-	TryBuildSpire();
-	TryBuildInfestationPit();
 	
-	TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
-	TryMorphUnit(ABILITY_ID::MORPH_HIVE, UNIT_TYPEID::ZERG_LAIR);	
+	
+	if (bot.getGamePhase() == 0) {
+	
+	}
+	else if (bot.getGamePhase() == 1) {
+		TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
+		TryBuildHydraliskDen();
+		OrderExtractor();
+	}
+	else if (bot.getGamePhase() >= 2) {
+		TryMorphUnit(ABILITY_ID::MORPH_HIVE, UNIT_TYPEID::ZERG_LAIR);
+		TryBuildSpire();
+		TryBuildInfestationPit();
+	}
 	
 	return false;
 }

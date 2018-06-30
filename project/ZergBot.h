@@ -12,6 +12,9 @@ class ZergBot : public Agent
 {
 private:
 
+	//Variaveis de estrategia
+	int gamePhase;
+	
 	Point2D startingPos;
 	
 	BuildingManager build_man;
@@ -27,7 +30,11 @@ public:
 	void setStartingPosCoords(float x, float y);
 
 	void setStartingPos(Point2D pos);
-	
+
+	int getGamePhase();
+
+	void setGamePhase(int phase);
+
 	BuildingManager GetBuildingManager();
 	
 	void OnStep() override final;

@@ -292,9 +292,9 @@ bool MacroManager::ManageCorruptorProduction() {
 }
 
 bool MacroManager::ManageInfestorProduction() {
-	size_t numOfInfest = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_INFESTATIONPIT);
+	size_t numOfPits = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_INFESTATIONPIT);
 
-	if (numOfInfest < 1) {
+	if (numOfPits < 1) {
 		return false;
 	}
 
@@ -617,9 +617,9 @@ void MacroManager::HandleGasWorkers() {
 void MacroManager::OnStep(){
 	ManageDroneProduction();
 	ManageOverlordProduction();
+	ManageInfestorProduction();
 	//ManageMutaliskProduction();
 	//ManageCorruptorProduction();
-	ManageInfestorProduction();
 	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
 	//ManageZerglingProduction();
 	ManageDrones();

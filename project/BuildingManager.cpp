@@ -29,7 +29,6 @@ bool BuildingManager::OnStep() {
 	return false;
 }
 
-
 bool BuildingManager::TryMorphUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type) {
 	
 	size_t numOfCntr = Util::CountSelfUnitsOfType(bot, unit_type);

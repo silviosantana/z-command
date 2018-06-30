@@ -24,6 +24,7 @@ private:
 	int statusScout;
 	int pontasX[3];
 	int pontasY[3];
+	int gasWorkerCounter;
 
 
 public:
@@ -31,6 +32,10 @@ public:
 	MacroManager(ZergBot & bot) : bot_(bot) {}
 	int getStatusScout();
 	void setStatusScout(int status);
+
+	int getGasWorkerCounter();
+	void setGasWorkerCounter(int counter);
+
 	void incrementStatusScout();
 	void OnStart();;
 

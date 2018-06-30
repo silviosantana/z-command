@@ -18,6 +18,15 @@ void MacroManager::incrementStatusScout() {
 	this->statusScout = this->statusScout % 9;
 }
 
+//Vespene gas 
+int MacroManager::getGasWorkerCounter() {
+	return this->gasWorkerCounter;
+}
+
+void MacroManager::setGasWorkerCounter(int counter) {
+	this->gasWorkerCounter = counter;
+}
+
 bool MacroManager::ManageScouting() {
 	Units overlords = bot_.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_OVERLORD));
 	//std::cout << "Scouting  " << std::to_string(overlords.size())<< std::endl;
@@ -88,6 +97,7 @@ bool MacroManager::ManageScouting() {
 void MacroManager::OnStart(){
 	// TODO: Initialise things here
 	this->setStatusScout(0);
+	this->setGasWorkerCounter(0);
 
 	int middleX = bot_.Observation()->GetGameInfo().width / 2;
 	int middleY = bot_.Observation()->GetGameInfo().height / 2;
@@ -406,22 +416,50 @@ void MacroManager::HandleGasWorkers() {
 		// if that unit is a refinery
 		//		if (unit.unit_type.toType() == UNIT_TYPEID::ZERG_EXTRACTOR && unit.isCompleted())
 
-		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR)
+		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR && this->gasWorkerCounter < 2)
 		{
-			std::cout << "achou extractor" << std::endl;
-			// if it's less than we want it to be, fill 'er up
-			for (int i = 0; i<2; ++i)
-			{
-				Units idleDrones = Util::GetIdleDrones(bot_);
-				
-				if (idleDrones.size() > 0) {
-					auto gasWorker = idleDrones[0];
+			const Unit* unit1 = nullptr;
+			const Unit* unit2 = nullptr;
+			const Unit* unit3 = nullptr;
 
-					bot_.Actions()->UnitCommand(gasWorker, ABILITY_ID::SMART, unit);
-
-					//m_workerData.setWorkerJob(gasWorker, WorkerJobs::Gas, unit);					
-				}
+			if (!GetRandomUnit(unit1, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
+				return;
 			}
+			if (unit1 != nullptr) {
+				bot_.Actions()->UnitCommand(unit1, ABILITY_ID::SMART, unit);
+				this->gasWorkerCounter++;
+			}
+
+			if (!GetRandomUnit(unit2, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
+				return;
+			}
+			if (unit2 != nullptr) {
+				bot_.Actions()->UnitCommand(unit2, ABILITY_ID::SMART, unit);
+				this->gasWorkerCounter++;
+
+			}
+	/*		if (!GetRandomUnit(unit3, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
+				return;
+			}
+			if (unit3 != nullptr) {
+				bot_.Actions()->UnitCommand(unit3, ABILITY_ID::SMART, unit);
+				this->gasWorkerCounter++;
+			}
+*/
+			std::cout << "achou extractor" << std::endl;
+			//// if it's less than we want it to be, fill 'er up
+			//for (int i = 0; i<2; ++i)
+			//{
+			//	const Unit* unit = nullptr;
+			//	if (!GetRandomUnit(unit, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
+			//		return;
+			//	}
+			//				
+			//	bot_.Actions()->UnitCommand(unit, ABILITY_ID::SMART, unit);
+
+			//	//m_workerData.setWorkerJob(gasWorker, WorkerJobs::Gas, unit);					
+			//	
+			//}
 		}
 	}
 }

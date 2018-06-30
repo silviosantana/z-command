@@ -231,9 +231,12 @@ bool MacroManager::ManageQueenProduction() {
 
 	// Criando 1 rainha para cada 15 drones
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
-	
+	size_t numOfQueens = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_QUEEN);
 	if (numOfDrones <15) {
-		std::cout << "Didn't order a Queen because of Drones:" << numOfDrones << std::endl;
+		return false;
+	}
+
+	if (numOfQueens > 4) {
 		return false;
 	}
 
@@ -243,10 +246,6 @@ bool MacroManager::ManageQueenProduction() {
 	if (numOfUnits >= (numOfHatcheries * 20 + 2)) {
 		OrderQueen();
 		std::cout << "Ordered a Queen(s)" << std::endl;
-	}
-	else {
-
-		std::cout << "Didn't order a Queen" << std::endl;
 	}
 
 	return false;

@@ -97,7 +97,7 @@ void MacroManager::OnStart(){
 	// TODO: Initialise things here
 	this->setStatusScout(0);
 	this->setGasWorkerCounter(0);
-
+	
 	int middleX = bot_.Observation()->GetGameInfo().width / 2;
 	int middleY = bot_.Observation()->GetGameInfo().height / 2;
 	pontasX[0] = (middleX * 2) - 10;
@@ -600,39 +600,35 @@ void MacroManager::HandleGasWorkers() {
 	Units extractors = bot_.Observation()->GetUnits(Unit::Self, IsUnits(types));
 	size_t numOfExt = extractors.size();
 
-	for (auto & unit : extractors) {
+	for (const auto & unit : extractors) {
 		
-		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR && this->gasWorkerCounter < numOfExt*3)
-		{
-			const Unit* unit1 = nullptr;
-			const Unit* unit2 = nullptr;
-			const Unit* unit3 = nullptr;
+		//std::cout << "tag: " << std::to_string(unit->tag) << " " << i++ << std::endl;
 
-			if (!GetRandomUnit(unit1, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
-				return;
-			}
-			if (unit1 != nullptr) {
-				bot_.Actions()->UnitCommand(unit1, ABILITY_ID::SMART, unit);
-				this->gasWorkerCounter++;
+		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR
+			&& unit->build_progress >= 1.0f) {
+
+			//// if we haven't assigned any workers to this refinery yet set count to 0
+			if (this->extractorWorkerCount.find(unit->tag) == this->extractorWorkerCount.end())
+			{
+				std::cout << "Inseriu " << std::to_string(unit->tag) << std::endl;
+				this->extractorWorkerCount[unit->tag] = 0;
 			}
 
-			if (!GetRandomUnit(unit2, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
-				return;
-			}
-			if (unit2 != nullptr) {
-				bot_.Actions()->UnitCommand(unit2, ABILITY_ID::SMART, unit);
-				this->gasWorkerCounter++;
+			int count = this->extractorWorkerCount[unit->tag];
+			for (int i = 0; i < (3 - count); i++) {
 
+				const Unit* worker = nullptr;
+				if (!GetRandomUnit(worker, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
+					return;
+				}
+				if (worker != nullptr) {
+					bot_.Actions()->UnitCommand(worker, ABILITY_ID::SMART, unit);
+					this->extractorWorkerCount[unit->tag] += 1;
+					std::cout << "botou drone pra extrair size:" <<this->extractorWorkerCount.size() << std::endl;
+				}
 			}
-			if (!GetRandomUnit(unit3, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
-				return;
-			}
-			if (unit3 != nullptr) {
-				bot_.Actions()->UnitCommand(unit3, ABILITY_ID::SMART, unit);
-				this->gasWorkerCounter++;
-			}
-
-			std::cout << "achou extractor" << std::endl;
+				
+			//std::cout << "achou extractor size:" << numOfExt << " " <<this->extractorWorkerCount.size() << " " << this->gasWorkerCounter << std::endl;
 		}
 	}
 }

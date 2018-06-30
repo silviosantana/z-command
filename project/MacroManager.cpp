@@ -239,6 +239,10 @@ bool MacroManager::ManageQueenProduction() {
 		return false;
 	}
 
+	if (Util::CountNumberOfCurrentAbilitiesInProgress(bot_, ABILITY_ID::TRAIN_QUEEN) > 0) {
+		return false;
+	}
+
 	// Criando 1 rainha para cada 15 drones
 	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
 	size_t numOfQueens = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_QUEEN);
@@ -370,7 +374,7 @@ bool MacroManager::OrderHydralisk() {
 		return false;
 	}
 
-	if (larvae.size() < 1 || (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 50)){
+	if (larvae.size() < 1 || (bot_.Observation()->GetMinerals() < 100 || bot_.Observation()->GetVespene() < 50)){
 		return false;
 	}
 

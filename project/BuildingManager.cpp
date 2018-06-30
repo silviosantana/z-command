@@ -21,6 +21,7 @@ bool BuildingManager::OnStep() {
 	OrderExtractor();
 	TryBuildHydraliskDen();
 	TryBuildSpire();
+	TryBuildInfestationPit();
 	
 	TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
 	TryMorphUnit(ABILITY_ID::MORPH_HIVE, UNIT_TYPEID::ZERG_LAIR);	
@@ -138,6 +139,33 @@ bool BuildingManager::TryBuildHydraliskDen() {
 	}
 
 	return TryBuildStructure(ABILITY_ID::BUILD_HYDRALISKDEN);
+
+}
+
+bool BuildingManager::TryBuildInfestationPit() {
+
+	const ObservationInterface* observation = bot.Observation();
+	size_t numOfLairs = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_LAIR);
+	size_t numOfPits = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_INFESTATIONPIT);
+
+	if ((bot.Observation()->GetMinerals() < 100) || (bot.Observation()->GetVespene() < 100)) {
+		return false;
+	}
+
+	if (numOfLairs < 1) {
+		return false;
+	}
+
+	if (numOfPits > 0) {
+		return false;
+	}
+
+	//Se a encomenda de um HydraliskDen estiver na fila, nao fazer nada
+	if (Util::CountNumberOfCurrentAbilitiesInProgress(bot, ABILITY_ID::BUILD_INFESTATIONPIT) > 0) {
+		return false;
+	}
+
+	return TryBuildStructure(ABILITY_ID::BUILD_INFESTATIONPIT);
 
 }
 

@@ -2,6 +2,7 @@
 
 #include <sc2api/sc2_api.h>
 #include <sc2api/sc2_interfaces.h>
+#include <sc2api/sc2_unit.h>
 
 class ZergBot;
 
@@ -50,7 +51,7 @@ public:
 	bool ManageInfestorProduction();
 
 	bool ManageDrones();
-
+	void ManageQueen();
 	bool ManageScouting();
 
 	bool OrderDrones();
@@ -58,7 +59,6 @@ public:
 	bool OrderHydralisk();
 	bool OrderZergling();
 	bool OrderQueen();
-	void ManageQueen();
 	void TryInjectLarva();
 	bool OrderMutalisk();
 	bool OrderCorruptor();

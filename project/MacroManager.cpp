@@ -333,7 +333,7 @@ bool MacroManager::ManageQueenProduction() {
 		return false;
 	}
 
-	if (numOfQueens > 4) {
+	if (numOfQueens > 2) {
 		return false;
 	}
 
@@ -594,13 +594,15 @@ bool MacroManager::OrderInfestor() {
 
 void MacroManager::HandleGasWorkers() {
 	// for each unit we have
+	std::vector<UNIT_TYPEID> types;
+	types.push_back(UNIT_TYPEID::ZERG_EXTRACTOR);
 	
-	for (auto & unit : bot_.Observation()->GetUnits(Unit::Alliance::Self))
-	{
-		// if that unit is a refinery
-		//		if (unit.unit_type.toType() == UNIT_TYPEID::ZERG_EXTRACTOR && unit.isCompleted())
+	Units extractors = bot_.Observation()->GetUnits(Unit::Self, IsUnits(types));
+	size_t numOfExt = extractors.size();
 
-		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR && this->gasWorkerCounter < 3)
+	for (auto & unit : extractors) {
+		
+		if (unit->unit_type.ToType() == UNIT_TYPEID::ZERG_EXTRACTOR && this->gasWorkerCounter < numOfExt*3)
 		{
 			const Unit* unit1 = nullptr;
 			const Unit* unit2 = nullptr;
@@ -631,19 +633,6 @@ void MacroManager::HandleGasWorkers() {
 			}
 
 			std::cout << "achou extractor" << std::endl;
-			//// if it's less than we want it to be, fill 'er up
-			//for (int i = 0; i<2; ++i)
-			//{
-			//	const Unit* unit = nullptr;
-			//	if (!GetRandomUnit(unit, bot_.Observation(), UNIT_TYPEID::ZERG_DRONE)) {
-			//		return;
-			//	}
-			//				
-			//	bot_.Actions()->UnitCommand(unit, ABILITY_ID::SMART, unit);
-
-			//	//m_workerData.setWorkerJob(gasWorker, WorkerJobs::Gas, unit);					
-			//	
-			//}
 		}
 	}
 }

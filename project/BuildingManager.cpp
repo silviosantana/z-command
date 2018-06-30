@@ -202,7 +202,7 @@ bool BuildingManager::OrderExtractor() {
 	size_t numOfSpawning = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_SPAWNINGPOOL);
 
 
-	if (numOfExtractors >= 1 || numOfSpawning == 0) {
+	if (numOfExtractors >= 2 || numOfSpawning == 0) {
 		return false;
 	}
 

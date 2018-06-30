@@ -406,14 +406,3 @@ bool MacroManager::OrderQueen() {
 	return false;
 }
 
-void MacroManager::OnStep()
-{
-	ManageDroneProduction();
-	ManageOverlordProduction();
-	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
-	ManageZerglingProduction();
-	ManageDrones();
-	ManageQueenProduction();
-}
-
-

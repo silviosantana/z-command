@@ -21,6 +21,7 @@ public:
 	
 	bool OrderExtractor();
 	bool TryBuildStructure(ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type = UNIT_TYPEID::ZERG_DRONE);
+	bool TryMorphUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type);
 	bool TryBuildSpawningPool();
 	//bool TryBuildExtractor();
 	

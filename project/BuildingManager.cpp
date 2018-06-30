@@ -19,7 +19,40 @@ bool BuildingManager::OnStep() {
 	TryBuildSpawningPool();	
 	OrderExtractor();
 	
+	TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
+	TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_LAIR);	
+	
 	return false;
+}
+
+
+bool BuildingManager::TryMorphUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type) {
+	
+	size_t numOfCntr = Util::CountSelfUnitsOfType(bot, unit_type);
+
+	if (numOfCntr == 0) {
+		return false;
+	}	
+	
+	const ObservationInterface* observation = bot.Observation();
+
+	Units units = bot.Observation()->GetUnits(Unit::Self);
+	const Unit* centerUnit = nullptr;
+
+	for (const auto& unit : units) {
+		if (unit->unit_type == unit_type) {
+			centerUnit = unit;
+		}
+	}
+
+	if (unit_type == UNIT_TYPEID::ZERG_HATCHERY) {
+		bot.Actions()->UnitCommand(centerUnit, ABILITY_ID::MORPH_LAIR); 
+	}
+	else if (unit_type == UNIT_TYPEID::ZERG_LAIR) {
+		bot.Actions()->UnitCommand(centerUnit, ABILITY_ID::MORPH_HIVE);
+	}	
+	
+	return true;
 }
 
 bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type) {

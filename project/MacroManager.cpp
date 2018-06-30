@@ -99,17 +99,6 @@ void MacroManager::OnStart(){
 	pontasY[2] = middleY;
 }
 
-void MacroManager::OnStep()
-{
-	ManageDroneProduction();
-	ManageOverlordProduction();
-	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
-	ManageZerglingProduction();
-	ManageDrones();
-	ManageQueenProduction();
-	ManageScouting();
-}
-
 bool MacroManager::GetRandomUnit(const Unit*& unit_out, const ObservationInterface* observation, UnitTypeID unit_type) {
 	Units my_units = observation->GetUnits(Unit::Alliance::Self);
 	std::random_shuffle(my_units.begin(), my_units.end()); // Seleciona aleatoriamente uma unidade
@@ -433,7 +422,7 @@ void MacroManager::HandleGasWorkers() {
 		{
 			std::cout << "achou extractor" << std::endl;
 			// if it's less than we want it to be, fill 'er up
-			for (int i = 0; i<(1); ++i)
+			for (int i = 0; i<2; ++i)
 			{
 				Units idleDrones = Util::GetIdleDrones(bot_);
 				

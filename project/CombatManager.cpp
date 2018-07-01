@@ -34,7 +34,7 @@ bool CombatManager::ManageAttack() {
 					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, EnemySpawnPoint);
 				}
 				else {
-					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front());
+					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
 				}
 			}
 			bot.setGamePhase(1);
@@ -44,13 +44,13 @@ bool CombatManager::ManageAttack() {
 		Units enemy_units = bot.Observation()->GetUnits(Unit::Alliance::Enemy);
 		if (numOfZerglings >= 20 && numOfRoachs >= 5 && numOfHydralisk >= 5) {
 			for (auto zergling : zerglings) {
-				bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front());
+				bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
 			}
 			for (auto roach : roachs) {
-				bot.Actions()->UnitCommand(roach, ABILITY_ID::ATTACK_ATTACK, enemy_units.front());
+				bot.Actions()->UnitCommand(roach, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
 			}
 			for (auto hydralisk : hydralisks) {
-				bot.Actions()->UnitCommand(hydralisk, ABILITY_ID::ATTACK_ATTACK, enemy_units.front());
+				bot.Actions()->UnitCommand(hydralisk, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
 			}
 			bot.setGamePhase(2);
 		}

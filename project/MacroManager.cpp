@@ -408,7 +408,7 @@ bool MacroManager::ManageDrones(){
 		}
 	}
 
-	std::cout << "Drones em idle: " << idleDrones.size() << std::endl;
+	//std::cout << "Drones em idle: " << idleDrones.size() << std::endl;
 
 	for (auto drone : idleDrones){
 

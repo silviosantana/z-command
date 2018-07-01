@@ -52,6 +52,7 @@ public:
 	bool ManageMutaliskProduction();
 	bool ManageCorruptorProduction();
 	bool ManageInfestorProduction();
+	bool ManageRoachProduction();
 
 	bool ManageDrones();
 	void ManageQueen();
@@ -67,6 +68,7 @@ public:
 	bool OrderMutalisk();
 	bool OrderCorruptor();
 	bool OrderInfestor();
+	bool OrderRoach();
 
 	void OnStep();
 	void HandleGasWorkers();

@@ -16,17 +16,17 @@ void BuildingManager::OnStart() {
 }
 
 bool BuildingManager::OnStep() {
-
 	TryBuildSpawningPool();
+	OrderExtractor();
 	
 	
 	if (bot.getGamePhase() == 0) {
-	
+		
 	}
 	else if (bot.getGamePhase() == 1) {
 		TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
 		TryBuildHydraliskDen();
-		OrderExtractor();
+		TryBuildRoachWarren();
 	}
 	else if (bot.getGamePhase() >= 2) {
 		TryMorphUnit(ABILITY_ID::MORPH_HIVE, UNIT_TYPEID::ZERG_LAIR);
@@ -96,7 +96,6 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 
 	return true;
 }
-
 
 bool BuildingManager::TryBuildSpawningPool() {
 	const ObservationInterface* observation = bot.Observation();
@@ -204,6 +203,32 @@ bool BuildingManager::TryBuildSpire() {
 
 }
 
+bool BuildingManager::TryBuildRoachWarren() {
+
+	const ObservationInterface* observation = bot.Observation();
+	size_t numOfLairs		= Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_LAIR);
+	size_t numOfRoachWarren = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_ROACHWARREN);
+
+	if (bot.Observation()->GetMinerals() < 150) {
+		return false;
+	}
+
+	if (numOfLairs < 1) {
+		return false;
+	}
+
+	if (numOfRoachWarren > 0) {
+		return false;
+	}
+
+	//Se a encomenda de um Spire estiver na fila, nao fazer nada
+	if (Util::CountNumberOfCurrentAbilitiesInProgress(bot, ABILITY_ID::BUILD_ROACHWARREN) > 0) {
+		return false;
+	}
+
+	return TryBuildStructure(ABILITY_ID::BUILD_ROACHWARREN);
+
+}
 
 bool BuildingManager::OrderExtractor() {
 

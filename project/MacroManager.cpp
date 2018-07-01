@@ -701,44 +701,55 @@ void MacroManager::HandleGasWorkers() {
 }
 
 void MacroManager::ManagerIdleWorkers() {
-
+	bool find = true;
 	Units workers = bot_.Observation()->GetUnits(Unit::Alliance::Self, IsUnit(UNIT_TYPEID::ZERG_DRONE));
+	std::vector<UNIT_TYPEID> types;
+	types.push_back(UNIT_TYPEID::ZERG_EXTRACTOR);
 
 	// for each of our workers
-	for (auto & worker : workers)
-	{
-		
-		if (worker == nullptr) { continue; }
+	for (auto & worker : workers){
 
+		if (worker == nullptr) { continue; }
 		bool isIdle = worker->orders.empty();
 
-		if (isIdle)
-		{		
+		if (isIdle)	{
 			Point2D spawn = bot_.GetBuildingManager().GetSpawn();
 			float distance = FLT_MAX;
 			const Unit* target = nullptr;
 
-			for (const auto& u : bot_.Observation()->GetUnits(Unit::Alliance::Neutral)) {
+			Units fields = bot_.Observation()->GetUnits(Unit::Alliance::Neutral);
+			Units extrac = bot_.Observation()->GetUnits(Unit::Alliance::Self, IsUnit(UNIT_TYPEID::ZERG_EXTRACTOR));
+
+			for (const auto& u : extrac) {
+
 				float newDistance = Distance2D(spawn, u->pos);
+
 				if (newDistance < distance) {
+					if (u->assigned_harvesters >= u->ideal_harvesters) {
+						continue;
+					}
 					distance = newDistance;
 					target = u;
+					bot_.Actions()->UnitCommand(worker, ABILITY_ID::HARVEST_GATHER_DRONE, target);
+					find = false;
 				}
 			}
 
-			std::cout << "Mandou drone " << std::to_string(worker->tag) << " pro mineral "<< std::endl;
+			if (find) {
+				for (const auto& u : fields) {
 
-			bot_.Actions()->UnitCommand(worker, ABILITY_ID::HARVEST_GATHER_DRONE, target);
-			
+					float newDistance = Distance2D(spawn, u->pos);
+
+					if (newDistance < distance) {
+
+						distance = newDistance;
+						target = u;
+						bot_.Actions()->UnitCommand(worker, ABILITY_ID::HARVEST_GATHER_DRONE, target);
+					}
+				}
+			}
 		}
-
-		// if it is idle
-		/*if (m_workerData.getWorkerJob(worker) == WorkerJobs::Idle)
-		{
-			setMineralWorker(worker);
-		}*/
 	}
-
 }
 
 void MacroManager::OnStep(){

@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 	ZergBot bot;
 	coordinator.SetParticipants({
 		CreateParticipant(Race::Zerg, &bot),
-		CreateComputer(Race::Random)
+		CreateComputer(Race::Random, sc2::Medium)
 	});
 
 	coordinator.LaunchStarcraft();

@@ -40,6 +40,8 @@ public:
 	int getGasWorkerCounter();
 	void setGasWorkerCounter(int counter);
 
+	sc2::Units GetUnitMineral();
+
 	void incrementStatusScout();
 	void OnStart();;
 

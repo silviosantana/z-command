@@ -379,7 +379,7 @@ bool MacroManager::ManageDrones(){
 	std::vector<UNIT_TYPEID> mineralTypes;
 	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_MINERALFIELD);
 	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_MINERALFIELD750);
-	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_VESPENEGEYSER);
+	//mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_VESPENEGEYSER);
 	/*mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER);*/
 
 	Units allMineralPatches = Util::GetNeutralUnitsOfType(bot_, mineralTypes);
@@ -395,7 +395,10 @@ bool MacroManager::ManageDrones(){
 		}
 	}
 
+	std::cout << "Drones em idle: " << idleDrones.size() << std::endl;
+
 	for (auto drone : idleDrones){
+
 		bot_.Actions()->UnitCommand(drone, ABILITY_ID::SMART, nearestPatch);
 	}
 
@@ -654,6 +657,47 @@ void MacroManager::HandleGasWorkers() {
 	}
 }
 
+void MacroManager::ManagerIdleWorkers() {
+
+	Units workers = bot_.Observation()->GetUnits(Unit::Alliance::Self, IsUnit(UNIT_TYPEID::ZERG_DRONE));
+
+	// for each of our workers
+	for (auto & worker : workers)
+	{
+		
+		if (worker == nullptr) { continue; }
+
+		bool isIdle = worker->orders.empty();
+
+		if (isIdle)
+		{		
+			Point2D spawn = bot_.GetBuildingManager().GetSpawn();
+			float distance = FLT_MAX;
+			const Unit* target = nullptr;
+
+			for (const auto& u : bot_.Observation()->GetUnits(Unit::Alliance::Neutral)) {
+				float newDistance = Distance2D(spawn, u->pos);
+				if (newDistance < distance) {
+					distance = newDistance;
+					target = u;
+				}
+			}
+
+			std::cout << "Mandou drone " << std::to_string(worker->tag) << " pro mineral "<< std::endl;
+
+			bot_.Actions()->UnitCommand(worker, ABILITY_ID::HARVEST_GATHER_DRONE, target);
+			
+		}
+
+		// if it is idle
+		/*if (m_workerData.getWorkerJob(worker) == WorkerJobs::Idle)
+		{
+			setMineralWorker(worker);
+		}*/
+	}
+
+}
+
 void MacroManager::OnStep(){
 	
 	///Manage Production of Units
@@ -673,6 +717,8 @@ void MacroManager::OnStep(){
 	ManageScouting();
 	ManageQueen();
 	HandleGasWorkers();
+	ManagerIdleWorkers();
+		
 	
 	
 }

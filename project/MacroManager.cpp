@@ -761,7 +761,5 @@ void MacroManager::OnStep(){
 	ManageQueen();
 	HandleGasWorkers();
 	ManagerIdleWorkers();
-		
-	
-	
+
 }

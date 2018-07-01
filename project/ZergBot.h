@@ -14,6 +14,7 @@ private:
 
 	//Variaveis de estrategia
 	int gamePhase;
+	int attackPhase;
 	
 	Point2D startingPos;
 	
@@ -34,6 +35,10 @@ public:
 	int getGamePhase();
 
 	void setGamePhase(int phase);
+
+	int getAttackPhase();
+
+	void setAttackPhase(int phase);
 
 	BuildingManager GetBuildingManager();
 	

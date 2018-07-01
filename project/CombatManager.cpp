@@ -17,18 +17,29 @@ bool CombatManager::OnStep()
 {
 	Units zerglings = bot.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_ZERGLING));
 	Units overlords = bot.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_OVERLORD));
-	
+	Point2D target_pos;
+
 	size_t numOfZerglings = zerglings.size();
 	size_t numOfOverlords = overlords.size();
 
 	ZerglingGroups++;
 
-	if (numOfZerglings > 20) {
+	if (bot.getAttackPhase() == 0) {
+		Units enemy_units = bot.Observation()->GetUnits(Unit::Alliance::Enemy);
+		
+		if (numOfZerglings > 25) {
 			for (auto zergling : zerglings) {
-				bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, EnemySpawnPoint);
+				if (enemy_units.empty()) {
+					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, EnemySpawnPoint);
+				}
+				else {
+					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front());
+				}
 			}
+			bot.setGamePhase(1);
 
 		}
+	}
 
 	return false;
 }

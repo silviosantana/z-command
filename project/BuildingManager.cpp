@@ -87,15 +87,16 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 
 	float rx = GetRandomScalar();
 	float ry = GetRandomScalar();
-
+	Point2D startingPos = bot.getStartingPos();
 	bot.Actions()->UnitCommand(unit_to_build,
 		ability_type_for_structure,
-		Point2D(unit_to_build->pos.x + rx * 15.0f, unit_to_build->pos.y + ry * 15.0f));
+		Point2D(startingPos.x + rx * 15.0f, startingPos.y + ry * 15.0f));
 
 	cout << "Tentativa de construir a estrutura -> " << int(unit_type) << std::endl;
 
 	return true;
 }
+
 
 bool BuildingManager::TryBuildSpawningPool() {
 	const ObservationInterface* observation = bot.Observation();

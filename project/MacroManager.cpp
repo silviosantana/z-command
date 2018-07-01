@@ -142,12 +142,12 @@ bool MacroManager::ManageDroneProduction(){
 			OrderDrones();
 		}
 		else {
-			std::cout << "Ordered a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
+			std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
 		}
 	}
-	else {
+	else if (bot_.getGamePhase() == 1){
 		// Se cada hatchery possuir menos de 24, faca mais
-		if ((numOfHatcheries * 12 + 2) >= numOfDrones) {
+		if (numOfDrones < (numOfHatcheries * 20)) {
 			OrderDrones();
 		}
 		else {
@@ -172,12 +172,16 @@ bool MacroManager::ManageZerglingProduction() {
 		return false;
 	}
 
-	if (numOfZerglings < 30) {
-		OrderZergling();
+	if (bot_.getGamePhase() == 0 || bot_.getGamePhase() == 1) {
+		if (numOfZerglings < 25) {
+			OrderZergling();
+		}
+		else {
+			std::cout << "Didn't order a zergling: " << numOfDrones << ", drones " << "game phase: " << bot_.getGamePhase() << "attack phase: "<< bot_.getAttackPhase() <<  std::endl;
+		}
 	}
-
-	else {
-		std::cout << "Didn't order a zergling: " << numOfDrones << ", drones " << std::endl;
+	else if (bot_.getGamePhase() == 2) {
+		OrderZergling();
 	}
 
 	return true;
@@ -213,39 +217,25 @@ bool MacroManager::ManageOverlordProduction(){
 	return false;
 }
 
-bool MacroManager::ManageGeyserProduction(){
-	// Verificar a possibilidade de construir um Geyser.
-	if (Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_EXTRACTOR) < 2 || Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_EXTRACTOR) < 1 && bot_.Observation()->GetFoodWorkers() > 14){
-		bot_.GetBuildingManager().OrderExtractor();
-		return true;
-	}
-
-	return false;
-}
-
 bool MacroManager::ManageHydraliskProduction() {
-	size_t numOfHd = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_HYDRALISKDEN);
-
-	if (numOfHd < 1) {
-		return false;
-	}
+	Units hydralisks = bot_.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_HYDRALISK));
+	size_t numOfHydralisk = hydralisks.size();
 
 	if (bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 50) {
 		return false;
 	}
 
-	// Criando 1 Hydralisk para cada 5 drones
-	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
-	if (numOfDrones >= 2) {
+	if (bot_.getGamePhase() == 1) {
+		if (numOfHydralisk <= 5) {
+			OrderHydralisk();
+			return true;
+		}
+		else {
+			std::cout << "Didn't order a Hydralisk" << "game phase: " << bot_.getGamePhase() << "attack phase: " << bot_.getAttackPhase() << std::endl;
+		}
+	}else if (bot_.getGamePhase() == 2) {
 		OrderHydralisk();
-		std::cout << "Ordered a Hydralisk(s)" << std::endl;
-		return true;
 	}
-
-	else {
-		std::cout << "Didn't order a Hydralisk" << std::endl;
-	}
-
 	return false;
 }
 
@@ -329,6 +319,8 @@ bool MacroManager::ManageInfestorProduction() {
 
 bool MacroManager::ManageRoachProduction() {
 	size_t numOfRoachWarren = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_ROACHWARREN);
+	Units roachs = bot_.Observation()->GetUnits(Unit::Self, IsUnit(UNIT_TYPEID::ZERG_ROACH));
+	size_t numOfRoachs = roachs.size();
 
 	if (numOfRoachWarren < 1) {
 		return false;
@@ -338,16 +330,15 @@ bool MacroManager::ManageRoachProduction() {
 		return false;
 	}
 
-	// Criando 1 Infestor para cada 2 drones
-	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
-	if (numOfDrones > 1) {
-		OrderRoach();
-		std::cout << "Ordered a Roach(s)" << std::endl;
-		return true;
+	if (bot_.getGamePhase() == 1) {
+		if (numOfRoachs <= 5) {
+			OrderRoach();
+		} else {
+			std::cout << "Didn't order a Roach" << "game phase: " << bot_.getGamePhase() << "attack phase: " << bot_.getAttackPhase() << std::endl;
+		}
 	}
-
-	else {
-		std::cout << "Didn't order a Roach" << std::endl;
+	else if (bot_.getGamePhase() == 2) {
+		OrderRoach();
 	}
 
 	return false;
@@ -378,15 +369,11 @@ bool MacroManager::ManageQueenProduction() {
 		std::cout << "Ordered a Queen(s)" << std::endl;
 
 	}
-	else {
-		if (numOfQueens > 2) {
+	else if (bot_.getGamePhase() == 1){
+		if (numOfQueens >= 2) {
 			return false;
 		}
-
-		size_t numOfHatcheries = Util::CountTownHallTypeBuildings(bot_);
-		size_t numOfUnits = bot_.Observation()->GetUnits(Unit::Alliance::Self).size();
-		// Se cada hatchery possuir menos de 20 unidades, faça mais antes de criar a queen!
-		if (numOfUnits >= (numOfHatcheries * 20 + 2)) {
+		else {
 			OrderQueen();
 			std::cout << "Ordered a Queen(s)" << std::endl;
 		}
@@ -749,8 +736,7 @@ void MacroManager::OnStep(){
 	//ManageInfestorProduction();
 	ManageQueenProduction();
 	ManageZerglingProduction();
-	//ManageGeyserProduction(); A unica unidade do jogo está sendo criada no BM
-	//ManageHydraliskProduction();
+	ManageHydraliskProduction();
 	//ManageMutaliskProduction();
 	//ManageCorruptorProduction();
 	ManageRoachProduction();

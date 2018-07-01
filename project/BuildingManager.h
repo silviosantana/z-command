@@ -28,6 +28,7 @@ public:
 	bool TryBuildHydraliskDen();
 	bool TryBuildSpire();
 	bool TryBuildInfestationPit();
+	bool TryBuildRoachWarren();
 	
 	Unit GetADrone();
 	Units GetTownHalls();

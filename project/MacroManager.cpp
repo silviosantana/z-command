@@ -327,6 +327,32 @@ bool MacroManager::ManageInfestorProduction() {
 	return false;
 }
 
+bool MacroManager::ManageRoachProduction() {
+	size_t numOfRoachWarren = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_ROACHWARREN);
+
+	if (numOfRoachWarren < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 75 && bot_.Observation()->GetVespene() < 25) {
+		return false;
+	}
+
+	// Criando 1 Infestor para cada 2 drones
+	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
+	if (numOfDrones > 1) {
+		OrderRoach();
+		std::cout << "Ordered a Roach(s)" << std::endl;
+		return true;
+	}
+
+	else {
+		std::cout << "Didn't order a Roach" << std::endl;
+	}
+
+	return false;
+}
+
 bool MacroManager::ManageQueenProduction() {
 	if (bot_.Observation()->GetMinerals() < 150) {
 		return false;
@@ -564,7 +590,6 @@ bool MacroManager::OrderMutalisk() {
 
 	for (auto larva : larvae) {
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_MUTALISK);
-		std::cout << "Ordered a Mutalisk(s)" << std::endl;
 		return true;
 	}
 
@@ -585,7 +610,6 @@ bool MacroManager::OrderCorruptor() {
 
 	for (auto larva : larvae) {
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_CORRUPTOR);
-		std::cout << "Ordered a Corruptor(s)" << std::endl;
 		return true;
 	}
 
@@ -606,7 +630,26 @@ bool MacroManager::OrderInfestor() {
 
 	for (auto larva : larvae) {
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_INFESTOR);
-		std::cout << "Ordered a Infestor(s)" << std::endl;
+		return true;
+	}
+
+	return false;
+}
+
+bool MacroManager::OrderRoach() {
+	//Construcao de Infestor
+	Units larvae = GetLarvae();
+
+	if (larvae.size() < 1) {
+		return false;
+	}
+
+	if (bot_.Observation()->GetMinerals() < 75 && bot_.Observation()->GetVespene() < 25) {
+		return false;
+	}
+
+	for (auto larva : larvae) {
+		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_ROACH);
 		return true;
 	}
 
@@ -670,7 +713,7 @@ void MacroManager::OnStep(){
 	//ManageHydraliskProduction();
 	//ManageMutaliskProduction();
 	//ManageCorruptorProduction();
-	
+	ManageRoachProduction();
 
 	//Manage Units
 	ManageDrones();

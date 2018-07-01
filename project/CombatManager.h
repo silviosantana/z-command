@@ -16,5 +16,6 @@ public:
 	CombatManager(ZergBot & bot) : bot(bot) {};
 
 	void OnStart();
+	bool ManageAttack();
 	bool OnStep();
 };

@@ -20,15 +20,17 @@ void BuildingManager::OnStart() {
 
 bool BuildingManager::OnStep() {
 	TryBuildSpawningPool();
-	OrderExtractor();
+	
 	
 	if (bot.getGamePhase() == 0) {
 		
 	}
 	else if (bot.getGamePhase() == 1) {
+		OrderExtractor();
 		TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
 		TryBuildHydraliskDen();
 		TryBuildRoachWarren();
+		
 	}
 	else if (bot.getGamePhase() >= 2) {
 		TryBuildHatchery(3, ABILITY_ID::BUILD_HATCHERY);

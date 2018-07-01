@@ -88,14 +88,24 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 		}
 	}
 
-	float rx = GetRandomScalar();
-	float ry = GetRandomScalar();
+	bool bad_location = true;
+	float rx;
+	float ry;
 	Point2D startingPos = bot.getStartingPos();
-	bot.Actions()->UnitCommand(unit_to_build,
-		ability_type_for_structure,
-		Point2D(startingPos.x + rx * 15.0f, startingPos.y + ry * 15.0f));
 
-	cout << "Tentativa de construir a estrutura -> " << int(unit_type) << std::endl;
+	while (bad_location) {
+
+		rx = GetRandomScalar();
+		ry = GetRandomScalar();		
+
+		if (bot.Query()->Placement(ability_type_for_structure, Point2D(startingPos.x + rx * 15.0f, startingPos.y + ry * 15.0f))) //verifica se a posicao gerada é valida
+		{
+			bot.Actions()->UnitCommand(unit_to_build, ability_type_for_structure, Point2D(startingPos.x + rx * 15.0f, startingPos.y + ry * 15.0f));
+			
+			cout << "Estrutura construída -> " << int(ability_type_for_structure) << std::endl;
+			bad_location = false;
+		}
+	}
 
 	return true;
 }
@@ -255,7 +265,6 @@ bool BuildingManager::TryBuildSpire() {
 	return TryBuildStructure(ABILITY_ID::BUILD_SPIRE);
 
 }
-
 bool BuildingManager::TryBuildRoachWarren() {
 
 	const ObservationInterface* observation = bot.Observation();

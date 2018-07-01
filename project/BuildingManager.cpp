@@ -13,12 +13,14 @@ void BuildingManager::OnStart() {
 		cout << "Hatchery spawn point x: " << spawn.x << ", y: " << spawn.y << endl;
 		bot.setStartingPos(spawn);
 	}
+
+	this->expansions_ = search::CalculateExpansionLocations(bot.Observation(), bot.Query());
+	startLocation_ = bot.Observation()->GetStartLocation();
 }
 
 bool BuildingManager::OnStep() {
 	TryBuildSpawningPool();
 	OrderExtractor();
-	
 	
 	if (bot.getGamePhase() == 0) {
 		
@@ -29,7 +31,8 @@ bool BuildingManager::OnStep() {
 		TryBuildRoachWarren();
 	}
 	else if (bot.getGamePhase() >= 2) {
-		TryMorphUnit(ABILITY_ID::MORPH_HIVE, UNIT_TYPEID::ZERG_LAIR);
+		TryBuildHatchery(3, ABILITY_ID::BUILD_HATCHERY);
+		//TryMorphUnit(ABILITY_ID::MORPH_HIVE, UNIT_TYPEID::ZERG_LAIR);
 		TryBuildSpire();
 		TryBuildInfestationPit();
 	}
@@ -95,6 +98,56 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 	cout << "Tentativa de construir a estrutura -> " << int(unit_type) << std::endl;
 
 	return true;
+}
+
+//BUILD_HATCHERY
+
+bool BuildingManager::TryBuildHatchery(int maxOfCenters, ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type) {
+
+	size_t numOfCenters = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_HATCHERY) + Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_LAIR) + Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_HIVE);
+	const ObservationInterface* observation = bot.Observation();
+
+	if (numOfCenters == maxOfCenters) {
+		return false;
+	}
+
+	// If a unit already is building a supply structure of this type, do nothing.
+	// Also get an scv to build the structure.
+	const Unit* unit_to_build = nullptr;
+	Units units = observation->GetUnits(Unit::Alliance::Self);
+	for (const auto& unit : units) {
+		for (const auto& order : unit->orders) {
+			if (order.ability_id == ability_type_for_structure) {
+				return false;
+			}
+		}
+
+		if (unit->unit_type == unit_type) {
+			unit_to_build = unit;
+		}
+	}
+
+
+	//encontrando uma posicao para construir
+	float minimum_distance = std::numeric_limits<float>::max();
+	Point3D closest_expansion;
+	for (const auto& expansion : expansions_) {
+		float current_distance = Distance2D(startLocation_, expansion);
+		if (current_distance < .01f) {
+			continue;
+		}
+
+		if (current_distance < minimum_distance) {
+			if (bot.Query()->Placement(ability_type_for_structure, expansion)) {
+				closest_expansion = expansion;
+				minimum_distance = current_distance;
+			}
+		}
+	}
+
+	bot.Actions()->UnitCommand(unit_to_build,
+		ability_type_for_structure,
+		closest_expansion);
 }
 
 bool BuildingManager::TryBuildSpawningPool() {

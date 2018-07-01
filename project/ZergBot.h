@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sc2api/sc2_api.h>
+#include "sc2lib/sc2_lib.h"
 #include "BuildingManager.h"
 #include "MacroManager.h"
 #include "CombatManager.h"

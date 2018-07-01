@@ -12,6 +12,8 @@ class BuildingManager {
 	ZergBot & bot;
 	bool timeToExpand = false;
 	Point2D spawn;
+	std::vector<sc2::Point3D> expansions_;
+	Point3D startLocation_;
 
 public:
 	BuildingManager(ZergBot & bot) : bot(bot) {};
@@ -23,6 +25,7 @@ public:
 	bool TryBuildStructure(ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type = UNIT_TYPEID::ZERG_DRONE);
 	bool TryMorphUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type);
 	bool TryBuildSpawningPool();
+	bool TryBuildHatchery(int maxOfCenters, ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type = UNIT_TYPEID::ZERG_DRONE);
 
 	//bool TryBuildExtractor();
 	bool TryBuildHydraliskDen();

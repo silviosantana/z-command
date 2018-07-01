@@ -10,6 +10,7 @@ class CombatManager{
 	Point2D EnemySpawnPoint;
 	int ZerglingGroups;
 
+
 public:
 
 	CombatManager(ZergBot & bot) : bot(bot) {};

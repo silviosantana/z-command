@@ -27,9 +27,16 @@ int ZergBot::getGamePhase() {
 	return this->gamePhase;
 }
 
-
 void ZergBot::setGamePhase(int phase) {
 	this->gamePhase = phase;
+}
+
+int ZergBot::getAttackPhase() {
+	return this->attackPhase;
+}
+
+void ZergBot::setAttackPhase(int phase) {
+	this->attackPhase = phase;
 }
 
 BuildingManager ZergBot::GetBuildingManager(){
@@ -38,6 +45,7 @@ BuildingManager ZergBot::GetBuildingManager(){
 
 void ZergBot::OnGameStart() {
 	setGamePhase(0);
+	setAttackPhase(0);
 
 	build_man.OnStart();
 	mac_man.OnStart();

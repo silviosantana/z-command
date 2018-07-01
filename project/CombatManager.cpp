@@ -31,15 +31,20 @@ bool CombatManager::OnStep()
 			for (auto zergling : zerglings) {
 				if (enemy_units.empty()) {
 					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, EnemySpawnPoint);
+					std::cout << "ATACKING SPAWNPOINT" << std::endl;
 				}
 				else {
-					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front());
+					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
+					std::cout << "ATACKING FRONT " << enemy_units.size() << std::endl;
+
 				}
 			}
 			bot.setGamePhase(1);
 
 		}
 	}
+	else if (bot.getAttackPhase() == 1) {
 
+	}
 	return false;
 }

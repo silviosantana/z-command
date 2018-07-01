@@ -56,6 +56,7 @@ public:
 	bool ManageDrones();
 	void ManageQueen();
 	bool ManageScouting();
+	void ManagerIdleWorkers();
 
 	bool OrderDrones();
 	bool OrderOverlords(int quantity);

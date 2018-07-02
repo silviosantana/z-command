@@ -51,45 +51,34 @@ bool CombatManager::ManageAttack() {
 
 
 	if (bot.getAttackPhase() == 0) {
-		
-		Units enemy_units = bot.Observation()->GetUnits(Unit::Alliance::Enemy);			
+
+		Units enemy_units = bot.Observation()->GetUnits(Unit::Alliance::Enemy);
 
 		if (iddleZr.size() > 25) {
-			
-				if (enemy_units.empty()) {
-					bot.Actions()->UnitCommand(iddleZr, ABILITY_ID::ATTACK_ATTACKBUILDING, EnemySpawnPoint);
-				}
-				else {
-					bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
-					bot.Actions()->UnitCommand(iddleZr, ABILITY_ID::ATTACK_ATTACKBUILDING, enemy_units.front());
-				}
-			
+
+			if (enemy_units.empty()) {
+				bot.Actions()->UnitCommand(iddleZr, ABILITY_ID::ATTACK_ATTACKBUILDING, EnemySpawnPoint);
+			}
+			else {
+				bot.Actions()->UnitCommand(iddleZr, ABILITY_ID::ATTACK_ATTACKBUILDING, enemy_units.front());
+			}
+
 			bot.setGamePhase(1);
 		}
 	}
 	else {
 		Units enemy_units = bot.Observation()->GetUnits(Unit::Alliance::Enemy);
-		if (numOfZerglings >= 20 && numOfRoachs >= 5 && numOfHydralisk >= 5) {
-			for (auto zergling : zerglings) {
-				bot.Actions()->UnitCommand(zergling, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
-			}
-			for (auto roach : roachs) {
-				bot.Actions()->UnitCommand(roach, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
-			}
-			for (auto hydralisk : hydralisks) {
-				bot.Actions()->UnitCommand(hydralisk, ABILITY_ID::ATTACK_ATTACK, enemy_units.front()->pos);
-			}
 
-		if (iddleZr.size() >= 30 && iddleRc.size() >= 15 ) {
-			
-				
+		if (iddleZr.size() >= 30 && iddleRc.size() >= 15) {
+
+
 			bot.Actions()->UnitCommand(iddleZr, ABILITY_ID::ATTACK_ATTACKBUILDING, enemy_units.front());
 			bot.Actions()->UnitCommand(iddleRc, ABILITY_ID::ATTACK_ATTACKBUILDING, enemy_units.front());
 			bot.Actions()->UnitCommand(iddleHl, ABILITY_ID::ATTACK_ATTACKBUILDING, enemy_units.front());
 			//bot.Actions()->UnitCommand(infestors, ABILITY_ID::ATTACK_ATTACK, enemy_units.front());
-			
+
 			bot.setGamePhase(2);
-		}	
+		}
 
 		if (iddleZr.size() >= 40) {
 
@@ -104,7 +93,7 @@ bool CombatManager::ManageAttack() {
 			bot.Actions()->UnitCommand(iddleHl, ABILITY_ID::ATTACK_ATTACKBUILDING, enemy_units.front());
 		}
 	}
-	
+
 
 	return true;
 }
@@ -116,7 +105,7 @@ bool CombatManager::OnStep()
 		&& Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_EXTRACTOR) >= 1) {
 		bot.setAttackPhase(1);
 	}
-	
+
 	ManageAttack();
 
 	return false;

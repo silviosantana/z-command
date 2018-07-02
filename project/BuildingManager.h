@@ -20,13 +20,14 @@ public:
 
 	void OnStart();
 	bool OnStep();
-	
+	bool BuildingManager::TryBuildSpineCrawler();
 	bool OrderExtractor();
 	bool TryBuildStructure(ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type = UNIT_TYPEID::ZERG_DRONE);
 	bool TryMorphUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type);
 	bool TryBuildSpawningPool();
 	bool TryBuildHatchery(int maxOfCenters, ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type = UNIT_TYPEID::ZERG_DRONE);
-
+	bool TryEvolveUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type);
+	
 	//bool TryBuildExtractor();
 	bool TryBuildHydraliskDen();
 	bool TryBuildSpire();

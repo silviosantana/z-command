@@ -20,35 +20,79 @@ void BuildingManager::OnStart() {
 
 bool BuildingManager::OnStep() {
 	TryBuildSpawningPool();
-	
+	TryBuildRoachWarren();
+
+	TryBuildHatchery(2, ABILITY_ID::BUILD_HATCHERY);
 	
 	if (bot.getGamePhase() == 0) {
 		
 	}
 	else if (bot.getGamePhase() == 1) {
 		OrderExtractor();
-		TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
+		TryBuildRoachWarren();		
+		TryBuildHatchery(2, ABILITY_ID::BUILD_HATCHERY);
+		TryEvolveUnit(ABILITY_ID::RESEARCH_ZERGLINGMETABOLICBOOST, UNIT_TYPEID::ZERG_SPAWNINGPOOL);
+		TryEvolveUnit(ABILITY_ID::RESEARCH_GLIALREGENERATION, UNIT_TYPEID::ZERG_ROACHWARREN);
 		TryBuildHydraliskDen();
-		TryBuildRoachWarren();
+		
 		
 	}
 	else if (bot.getGamePhase() >= 2) {
-		TryBuildHatchery(3, ABILITY_ID::BUILD_HATCHERY);
+		TryBuildRoachWarren();
+		TryBuildHydraliskDen();
+		TryBuildHatchery(4, ABILITY_ID::BUILD_HATCHERY);
 		//TryMorphUnit(ABILITY_ID::MORPH_HIVE, UNIT_TYPEID::ZERG_LAIR);
-		TryBuildSpire();
-		TryBuildInfestationPit();
+		TryMorphUnit(ABILITY_ID::MORPH_LAIR, UNIT_TYPEID::ZERG_HATCHERY);
+		//TryBuildSpire();
+		TryEvolveUnit(ABILITY_ID::RESEARCH_ZERGLINGMETABOLICBOOST, UNIT_TYPEID::ZERG_SPAWNINGPOOL);
+		TryEvolveUnit(ABILITY_ID::RESEARCH_GLIALREGENERATION, UNIT_TYPEID::ZERG_ROACHWARREN);
+		TryEvolveUnit(ABILITY_ID::RESEARCH_ZERGLINGADRENALGLANDS, UNIT_TYPEID::ZERG_SPAWNINGPOOL);
+		TryEvolveUnit(ABILITY_ID::RESEARCH_TUNNELINGCLAWS, UNIT_TYPEID::ZERG_ROACHWARREN);
+		//TryBuildInfestationPit();
+
 	}
 	
 	return false;
 }
 
+bool BuildingManager::TryEvolveUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type) {
+
+	size_t numOfCntr = Util::CountSelfUnitsOfType(bot, unit_type);
+
+	if (numOfCntr == 0 ) {
+		return false;
+	}
+
+	const ObservationInterface* observation = bot.Observation();
+
+	Units units = bot.Observation()->GetUnits(Unit::Self);
+	const Unit* Unit = nullptr;
+
+	for (const auto& unit : units) {
+		if (unit->unit_type == unit_type) {
+			Unit = unit;
+		}
+	}
+
+	bot.Actions()->UnitCommand(Unit, ability_type_for_unit);
+}
+
 bool BuildingManager::TryMorphUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID unit_type) {
 	
 	size_t numOfCntr = Util::CountSelfUnitsOfType(bot, unit_type);
+	
 
-	if (numOfCntr == 0) {
+	if (unit_type == UNIT_TYPEID::ZERG_HATCHERY && Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_LAIR) >= 1 ) {
+		false;
+	}
+
+	if (unit_type == UNIT_TYPEID::ZERG_LAIR && Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_HIVE) >= 1) {
+		false;
+	}
+
+	if (numOfCntr == 0 || GetRandomScalar() > -0.75 ) {
 		return false;
-	}	
+	}
 	
 	const ObservationInterface* observation = bot.Observation();
 
@@ -71,8 +115,20 @@ bool BuildingManager::TryMorphUnit(ABILITY_ID ability_type_for_unit, UNIT_TYPEID
 	return true;
 }
 
+bool BuildingManager::TryBuildSpineCrawler() {
+
+	size_t numOfSC = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_SPINECRAWLER);
+	size_t numOfCenters = Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_HATCHERY) + Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_LAIR) + Util::CountSelfUnitsOfType(bot, UNIT_TYPEID::ZERG_HIVE);
+	
+	if (GetRandomScalar() > 0.5 && numOfSC < 2 * numOfCenters){
+		return TryBuildStructure(ABILITY_ID::BUILD_SPINECRAWLER);
+	}
+
+	return true;
+}
+
 bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, UNIT_TYPEID unit_type) {
-	const ObservationInterface* observation = bot.Observation();
+	const ObservationInterface* observation = bot.Observation();	
 
 	// If a unit already is building a supply structure of this type, do nothing.
 	// Also get an scv to build the structure.
@@ -104,7 +160,7 @@ bool BuildingManager::TryBuildStructure(ABILITY_ID ability_type_for_structure, U
 		{
 			bot.Actions()->UnitCommand(unit_to_build, ability_type_for_structure, Point2D(startingPos.x + rx * 15.0f, startingPos.y + ry * 15.0f));
 			
-			cout << "Estrutura construída -> " << int(ability_type_for_structure) << std::endl;
+			//cout << "Estrutura construída -> " << int(ability_type_for_structure) << std::endl;
 			bad_location = false;
 		}
 	}
@@ -214,6 +270,12 @@ bool BuildingManager::TryBuildHydraliskDen() {
 
 }
 
+
+
+
+
+
+
 bool BuildingManager::TryBuildInfestationPit() {
 
 	const ObservationInterface* observation = bot.Observation();
@@ -277,9 +339,9 @@ bool BuildingManager::TryBuildRoachWarren() {
 		return false;
 	}
 
-	if (numOfLairs < 1) {
-		return false;
-	}
+	//if (numOfLairs < 1) {
+	//	return false;
+	//}
 
 	if (numOfRoachWarren > 0) {
 		return false;
@@ -314,7 +376,7 @@ bool BuildingManager::OrderExtractor() {
 		return false;
 	}
 
-	cout << "Ordering an Extractor" << endl;
+	//cout << "Ordering an Extractor" << endl;
 
 
 	//Hatchery mais proximo do Spawn
@@ -334,7 +396,7 @@ bool BuildingManager::OrderExtractor() {
 		}
 	}
 
-	cout << "Available Geysers: " << num_geysers << endl;
+	//cout << "Available Geysers: " << num_geysers << endl;
 
 	if (num_geysers >= 1) {
 		Unit builder = GetADrone();

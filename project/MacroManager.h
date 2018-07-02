@@ -40,14 +40,14 @@ public:
 	int getGasWorkerCounter();
 	void setGasWorkerCounter(int counter);
 
-	sc2::Units GetUnitMineral();
+	//sc2::Units GetUnitMineral();
 
 	void incrementStatusScout();
 	void OnStart();;
 
 	bool ManageDroneProduction();
 	bool ManageOverlordProduction();
-	bool ManageGeyserProduction();
+	//bool ManageGeyserProduction();
 	bool ManageZerglingProduction();
 	bool ManageQueenProduction();
 	bool ManageHydraliskProduction();
@@ -71,6 +71,9 @@ public:
 	bool OrderCorruptor();
 	bool OrderInfestor();
 	bool OrderRoach();
+
+	sc2::Point2D getNearestCenter(sc2::Point2D worker);
+	void printWorkersByCenters();
 
 	void OnStep();
 	void HandleGasWorkers();

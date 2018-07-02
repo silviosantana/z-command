@@ -1,5 +1,6 @@
 #include "MacroManager.h"
 #include "Utilities.h"
+#include "time.h"
 
 using namespace sc2;
 
@@ -138,21 +139,30 @@ bool MacroManager::ManageDroneProduction(){
 	size_t numOfHatcheries = Util::CountTownHallTypeBuildings(bot_);
 
 	if (bot_.getGamePhase() == 0) {
-		if (numOfDrones < (numOfHatcheries * 15)) {
+		if (numOfDrones < (numOfHatcheries * 18)) {
 			OrderDrones();
 		}
 		else {
-			std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
+			//std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
 		}
 	}
 	else if (bot_.getGamePhase() == 1){
 		// Se cada hatchery possuir menos de 24, faca mais
-		if (numOfDrones < (numOfHatcheries * 20)) {
+		if (numOfDrones < (numOfHatcheries * 10)) {
 			OrderDrones();
 		}
 		else {
-			std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
+			//std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
 		}
+	}
+	else {
+		if (numOfDrones < (numOfHatcheries * 18)) {
+			OrderDrones();
+		}
+		else {
+			//std::cout << "Didn't order a drone, hatcheries: " << numOfHatcheries << ", drones atm: " << numOfDrones << std::endl;
+		}
+
 	}
 	
 
@@ -173,15 +183,22 @@ bool MacroManager::ManageZerglingProduction() {
 	}
 
 	if (bot_.getGamePhase() == 0 || bot_.getGamePhase() == 1) {
-		if (numOfZerglings < 25) {
+		if (numOfZerglings < 35) {
 			OrderZergling();
 		}
 		else {
-			std::cout << "Didn't order a zergling: " << numOfDrones << ", drones " << "game phase: " << bot_.getGamePhase() << "attack phase: "<< bot_.getAttackPhase() <<  std::endl;
+			//std::cout << "Didn't order a zergling: " << numOfDrones << ", drones " << "game phase: " << bot_.getGamePhase() << "attack phase: "<< bot_.getAttackPhase() <<  std::endl;
 		}
 	}
 	else if (bot_.getGamePhase() == 2) {
-		OrderZergling();
+		if (numOfZerglings < 40) {
+			OrderZergling();
+
+		}
+		else{
+			//std::cout << "Didn't order a zergling: " << numOfDrones << ", drones " << "game phase: " << bot_.getGamePhase() << "attack phase: " << bot_.getAttackPhase() << std::endl;
+		}
+		
 	}
 
 	return true;
@@ -189,6 +206,8 @@ bool MacroManager::ManageZerglingProduction() {
 
 bool MacroManager::ManageOverlordProduction(){
 	const ObservationInterface *obs = bot_.Observation();
+
+	
 
 	// Esperar ate 14 drones
 	if (obs->GetMinerals() > 100 && obs->GetFoodUsed() == 14 && obs->GetFoodCap() == 14){
@@ -198,10 +217,18 @@ bool MacroManager::ManageOverlordProduction(){
 
 	size_t currentOv = Util::CountOverlordsAndOverseers(bot_);
 
+	if (currentOv < 8 && obs->GetMinerals() > 100 && bot_.getGamePhase() == 1) {
+		OrderOverlords(1);
+	}
+
+	if (currentOv < 15 && obs->GetMinerals() > 100 && bot_.getGamePhase() == 2) {
+		OrderOverlords(1);
+	}
+
 	// Lae mid game, build an overlord when 4 away, build two if more than 500 minerals
 	if (currentOv > 5){
 		if (obs->GetFoodCap() - obs->GetFoodUsed() <= 5){
-			OrderOverlords(1);
+			OrderOverlords(1); 
 			return true;
 		}
 	}
@@ -302,17 +329,9 @@ bool MacroManager::ManageInfestorProduction() {
 		return false;
 	}
 
-	// Criando 1 Infestor para cada 2 drones
-	size_t numOfDrones = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_DRONE);
-	if (numOfDrones > 1) {
-		OrderInfestor();
-		std::cout << "Ordered a Infestor(s)" << std::endl;
-		return true;
-	}
+	OrderInfestor();
 
-	else {
-		std::cout << "Didn't order a Infestor" << std::endl;
-	}
+	
 
 	return false;
 }
@@ -331,7 +350,7 @@ bool MacroManager::ManageRoachProduction() {
 	}
 
 	if (bot_.getGamePhase() == 1) {
-		if (numOfRoachs <= 5) {
+		if (numOfRoachs <= 25) {
 			OrderRoach();
 		} else {
 			std::cout << "Didn't order a Roach" << "game phase: " << bot_.getGamePhase() << "attack phase: " << bot_.getAttackPhase() << std::endl;
@@ -366,7 +385,7 @@ bool MacroManager::ManageQueenProduction() {
 			return false;
 		}
 		OrderQueen();
-		std::cout << "Ordered a Queen(s)" << std::endl;
+		//std::cout << "Ordered a Queen(s)" << std::endl;
 
 	}
 	else if (bot_.getGamePhase() == 1){
@@ -375,7 +394,7 @@ bool MacroManager::ManageQueenProduction() {
 		}
 		else {
 			OrderQueen();
-			std::cout << "Ordered a Queen(s)" << std::endl;
+			//std::cout << "Ordered a Queen(s)" << std::endl;
 		}
 	}
 
@@ -390,8 +409,12 @@ bool MacroManager::ManageDrones(){
 
 	// Find nearest mineral or rich-mineral patch
 	std::vector<UNIT_TYPEID> mineralTypes;
+	
 	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_MINERALFIELD);
 	mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_MINERALFIELD750);
+
+	
+
 	//mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_VESPENEGEYSER);
 	/*mineralTypes.push_back(UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER);*/
 
@@ -399,7 +422,13 @@ bool MacroManager::ManageDrones(){
 
 	Point2D spawn = bot_.GetBuildingManager().GetSpawn();
 	float distance = FLT_MAX;
+
+	//Units allHatcheriesPatches = Util::GetSelfUnitsOfType(bot_, centerTypes);
+
+
 	Tag nearestPatch;
+
+
 	for (auto patch : allMineralPatches){
 		float newDistance = Distance2D(spawn, patch->pos);
 		if (newDistance < distance){
@@ -412,7 +441,7 @@ bool MacroManager::ManageDrones(){
 
 	for (auto drone : idleDrones){
 
-		bot_.Actions()->UnitCommand(drone, ABILITY_ID::SMART, nearestPatch);
+		//bot_.Actions()->UnitCommand(drone, ABILITY_ID::SMART, nearestPatch);
 	}
 
 	return false;
@@ -439,7 +468,7 @@ bool MacroManager::OrderOverlords(int quantity){
 
 	for (auto larva : larvae){
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_OVERLORD);
-		std::cout << "Ordered an Overlord" << std::endl;
+		//std::cout << "Ordered an Overlord" << std::endl;
 		return true;
 	}
 
@@ -460,27 +489,56 @@ bool MacroManager::OrderZergling() {
 		return false;
 	}
 
-	for (auto larva : larvae) {
+	for (auto larva : larvae) {		
 		
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_ZERGLING);
-		std::cout << "Ordered an Zergling" << std::endl;
-		return true;
+		//std::cout << "Ordered an Zergling" << std::endl;
+		return true;	
+		
 	}
 
 	return false;
 }
 
 bool MacroManager::OrderDrones() {
+
+	std::vector<UNIT_TYPEID> centerTypes;
+	centerTypes.push_back(UNIT_TYPEID::ZERG_HATCHERY);
+	centerTypes.push_back(UNIT_TYPEID::ZERG_HIVE);
+	centerTypes.push_back(UNIT_TYPEID::ZERG_LAIR);
+	Units centers = Util::GetSelfUnitsOfType(bot_, centerTypes);
+
+	int numHarvester= 100;
+	int newNumHarvester;
+
+	Unit bestCenter;
+
+	for (auto & center : centers) {
+
+		newNumHarvester = center->assigned_harvesters;
+
+		if (newNumHarvester < numHarvester) {
+			bestCenter = *center;
+			numHarvester = newNumHarvester;
+		}
+	}
+
+	
+
 	// Construção de drones
 	Units larvae = GetLarvae();
 	if (larvae.size() < 1 || bot_.Observation()->GetMinerals() < 50 || bot_.Observation()->GetFoodCap() == bot_.Observation()->GetFoodUsed()) {
 		return false;
 	}
 
-	for (auto larva : larvae) {
-		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_DRONE);
-		std::cout << "Ordered a drone(s)" << std::endl;
-		return true;
+	for (auto larva : larvae) {		
+
+		if (Distance2D(larva->pos, bestCenter.pos) < 30.0f) {
+			bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_DRONE);
+			//std::cout << "mais necessitado: " << bestCenter.assigned_harvesters << std::endl;
+			//std::cout << "Ordered a drone(s)" << std::endl;
+			return true;
+		}		
 	}
 
 	return false;
@@ -490,17 +548,24 @@ bool MacroManager::OrderHydralisk() {
 	//Construcao de Hydralisks
 	Units larvae = GetLarvae();
 
+	size_t numOfLairs= Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_LAIR);
+	size_t numOfHidraDum = Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_HYDRALISKDEN);
+
+	if (numOfLairs = 0 || numOfHidraDum == 0) {
+		return false;
+	}
+
 	if (larvae.size() < 1){
 		return false;
 	}
 
-	if ((bot_.Observation()->GetMinerals() < 100 && bot_.Observation()->GetVespene() < 50)) {
+	if ((bot_.Observation()->GetMinerals() < 100 || bot_.Observation()->GetVespene() < 50)) {
 		return false;
 	}
 
 	for (auto larva : larvae) {
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_HYDRALISK);
-		std::cout << "Ordered a Hydralisk(s)" << std::endl;
+		//std::cout << "Ordered a Hydralisk(s)" << std::endl;
 		return true;
 	}
 
@@ -521,7 +586,7 @@ bool MacroManager::OrderQueen() {
 			if (!GetRandomUnit(unit, bot_.Observation(), UNIT_TYPEID::ZERG_HATCHERY)) {
 				return false;
 			}
-			std::cout << " Really ordered a QUEEN! " << std::endl;
+			//std::cout << " Really ordered a QUEEN! " << std::endl;
 			bot_.Actions()->UnitCommand(unit, ABILITY_ID::TRAIN_QUEEN);
 			return true;
 		}
@@ -638,9 +703,10 @@ bool MacroManager::OrderRoach() {
 		return false;
 	}
 
-	for (auto larva : larvae) {
+	for (auto larva : larvae) {		
 		bot_.Actions()->UnitCommand(larva, ABILITY_ID::TRAIN_ROACH);
-		return true;
+		//std::cout << "Ordered an Roach" << std::endl;
+		return true;		
 	}
 
 	return false;
@@ -687,25 +753,80 @@ void MacroManager::HandleGasWorkers() {
 	}
 }
 
+sc2::Point2D MacroManager::getNearestCenter(sc2::Point2D worker) {
+
+	std::vector<UNIT_TYPEID> centerTypes;
+	centerTypes.push_back(UNIT_TYPEID::ZERG_HATCHERY);
+	centerTypes.push_back(UNIT_TYPEID::ZERG_HIVE);
+	centerTypes.push_back(UNIT_TYPEID::ZERG_LAIR);
+	
+	Point2D nearest;
+	float distance = FLT_MAX;
+	float newDistance;
+	Units centers = Util::GetSelfUnitsOfType(bot_, centerTypes);
+
+	for (auto & center : centers) {
+
+		newDistance = Distance2D(worker, center->pos);
+
+		if (newDistance < distance) {			
+			distance = newDistance;
+			nearest = center->pos;
+		}	
+	}
+
+	return nearest;
+}
+
+void MacroManager::printWorkersByCenters() {
+
+	std::vector<UNIT_TYPEID> centerTypes;
+	centerTypes.push_back(UNIT_TYPEID::ZERG_HATCHERY);
+	centerTypes.push_back(UNIT_TYPEID::ZERG_HIVE);
+	centerTypes.push_back(UNIT_TYPEID::ZERG_LAIR);	
+	
+	Units centers = Util::GetSelfUnitsOfType(bot_, centerTypes);
+
+	for (auto & center : centers) {
+
+		if (center->unit_type == UNIT_TYPEID::ZERG_HATCHERY) {
+			std::cout << "Hatchery: " << center->assigned_harvesters << std::endl;
+		}
+		else if (center->unit_type == UNIT_TYPEID::ZERG_HIVE) {
+			std::cout << "Hive: " << center->assigned_harvesters << std::endl;
+		}
+		else if (center->unit_type == UNIT_TYPEID::ZERG_LAIR) {
+			std::cout << "Lair: " << center->assigned_harvesters << std::endl;
+		}
+		
+	}
+}
+
 void MacroManager::ManagerIdleWorkers() {
 	bool find = true;
 	Units workers = bot_.Observation()->GetUnits(Unit::Alliance::Self, IsUnit(UNIT_TYPEID::ZERG_DRONE));
 	std::vector<UNIT_TYPEID> types;
 	types.push_back(UNIT_TYPEID::ZERG_EXTRACTOR);
 
+
+	Point2D spawn;
+
 	// for each of our workers
-	for (auto & worker : workers){
+	for (auto & worker : workers) {
 
 		if (worker == nullptr) { continue; }
 		bool isIdle = worker->orders.empty();
+		
 
-		if (isIdle)	{
-			Point2D spawn = bot_.GetBuildingManager().GetSpawn();
+		if (isIdle) {
+			Point2D spawn = getNearestCenter(worker->pos);
 			float distance = FLT_MAX;
 			const Unit* target = nullptr;
 
 			Units fields = bot_.Observation()->GetUnits(Unit::Alliance::Neutral);
 			Units extrac = bot_.Observation()->GetUnits(Unit::Alliance::Self, IsUnit(UNIT_TYPEID::ZERG_EXTRACTOR));
+
+
 
 			for (const auto& u : extrac) {
 
@@ -739,21 +860,32 @@ void MacroManager::ManagerIdleWorkers() {
 	}
 }
 
+
+
 void MacroManager::OnStep(){
 	
+	
+	if (GetRandomScalar() < -0.95) {
+		std::cout << "Zerglings: " << Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_ZERGLING) << " | Roach: " << Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_ROACH) << " | Overlord: " << Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_OVERLORD) << " | Hidra: " << Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_HYDRALISK) << " | " << "Queens: " << Util::CountSelfUnitsOfType(bot_, UNIT_TYPEID::ZERG_QUEEN) << " | AttackPhase: " << bot_.getAttackPhase() << " | GamePhase: " << bot_.getGamePhase() << std::endl;
+		printWorkersByCenters();
+	}
+
 	///Manage Production of Units
 	ManageDroneProduction();
 	ManageOverlordProduction();
 	//ManageInfestorProduction();
 	ManageQueenProduction();
+	
+	ManageRoachProduction();
 	ManageZerglingProduction();
 	ManageHydraliskProduction();
+
 	//ManageMutaliskProduction();
 	//ManageCorruptorProduction();
-	ManageRoachProduction();
+	
 
 	//Manage Units
-	ManageDrones();
+	//ManageDrones();
 	ManageScouting();
 	ManageQueen();
 	HandleGasWorkers();
